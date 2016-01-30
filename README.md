@@ -11,13 +11,13 @@ This repo is not it.  It's where I attempt to recreate it.
 
 First, git commits need an author.  It would be nice to figure out
 the author.  The version I used I suspect was written by
-[this guy](http://web.mit.edu/london/www/home.html).
+[Mark London](http://web.mit.edu/london/www/home.html).
 
 ## Where to find BULLETIN
 
 The place to get it seems to be the
 [DECUS archives](http://decuslib.com/).
-I tracked it down with help from Kent Brodie who I traced via
+I tracked it down with help from Kent Brodie who I discovered via
 [an old USENET post](https://groups.google.com/forum/#!search/bulletin$20vms/comp.os.vms/rzM2LQMl6Jo/y1BKhO7dv80J)
 where he too was trying to track the software down. In 1994.
 
@@ -48,7 +48,15 @@ tar jcf decus.tar.bz2 decus
 This was used to create `decus.tar.bz2` which was then extracted as
 `decus/` in this archive.
 
-## Creating the BULLETIN git repo
+## Creating the BULLETIN source repo (or branch)
+
+Still trying to decide the end result here. I was going to do a separate
+source repo but there's a lot of conversion steps I'd like to capture.
+So the `master` branch might turn into a `decus2git` branch and then once
+the gross conversion steps are done, each tape would get it's own orphan
+commit branch (with the correct `GIT_AUTHOR` and commit info metadata).
+Something like `tapes/DECUS_TAPE_NAME`. Then the `master` branch would
+be created by merging in each tape branch in chronological order.
 
 The BULLETIN git repo is created by a shell script, `mkBULLETIN.sh`
 based on edits to the various versions of bulletin that were extracted
@@ -57,7 +65,8 @@ from the ZIP archives.
 The files in the ZIP archives are not ready in their current state to
 make the repo. A number of things had to be done to get them ready for
 a proper historical source code archive.  The commit logs for this repo
-cover those steps, but to explain in a bit more detail:
+cover those steps, but the following sections explain the steps in
+more detail.
 
 ### Dependencies
 
