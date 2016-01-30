@@ -28,7 +28,7 @@ To trawl through looking for bulletin source distros (using the
 
 ```
 for f in *.zip; do
-  unzip -l $f 2> /dev/null | grep -qi bulletin && echo $f;
+  unzip -l $f 2> /dev/null | grep -qi /bulletin && echo $f;
 done
 ```
 
@@ -39,8 +39,8 @@ copied down the relevant bits of the zip files which I extracted like so:
 
 ```
 for f in *.zip; do
-  unzip -l $f 2> /dev/null | grep -qi bulletin \
-    && unzip $f $(unzip -l $f | grep -i bulletin | awk '{print $4}');
+  unzip -l $f 2> /dev/null | grep -qi /bulletin \
+    && unzip $f $(unzip -l $f | grep -i /bulletin | awk '{print $4}');
 done
 tar jcf decus.tar.bz2 decus
 ```
