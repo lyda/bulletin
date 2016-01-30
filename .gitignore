@@ -1,1 +1,6 @@
 /convert-vms-record-fmt
+*.bz2
+*.zip
+*.zoo
+*.exe
+*.obj
