@@ -59,6 +59,11 @@ make the repo. A number of things had to be done to get them ready for
 a proper historical source code archive.  The commit logs for this repo
 cover those steps, but to explain in a bit more detail:
 
+### Dependencies
+
+The shell snippets assume zsh (the `**/*.ext` idiom gets used a lot).
+Need a `gcc` toolchain.  Need the `unzip` and `zoo` utilities.
+
 ### File conversions
 
 Some files are in VMS record formats.  These are handled by
@@ -73,6 +78,26 @@ into mbox files.
 
 Within the zip files there are sometimes other archive files.
 These had to be extracted.
+
+For .zoo files:
+
+```
+for f in **/*.zoo; do
+  (cd ${f%\/*} && zoo -extract ${f##*\/} && git rm ${f##*\/});
+done
+```
+
+For .zip files:
+
+```
+for f in **/*.zip; do
+  (cd ${f%\/*} && unzip ${f##*\/} && git rm ${f##*\/});
+done
+```
+
+### General cleanup
+
+  * Removed exe and obj files: `git rm **/*.{exe,obj}`
 
 ### Committing to the BULLETIN git repo
 
