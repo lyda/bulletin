@@ -1,0 +1,26 @@
+	MODULE BULLETIN_MAINCOMMANDS
+	DEFINE VERB BULLETIN
+		PARAMETER P1, LABEL=SELECT_FOLDER
+		QUALIFIER ALL
+		QUALIFIER BBOARD
+		QUALIFIER BULLCP
+		QUALIFIER CLEANUP, LABEL=CLEANUP, VALUE(REQUIRED)
+		QUALIFIER EDIT
+		QUALIFIER KEYPAD
+		QUALIFIER LOGIN
+		QUALIFIER MARKED
+		QUALIFIER PAGE, DEFAULT
+		QUALIFIER READNEW
+		QUALIFIER REVERSE
+!
+! The following line causes a line to be outputted separating system notices.
+! The line consists of a line of all "-"s, i.e.:
+!--------------------------------------------------------------------------
+! If you want a different character to be used, simply put in the desired one
+! in the following line.  If you want to disable the feature, remove the
+! DEFAULT at the end of the line.  (Don't remove the whole line!)
+!
+		QUALIFIER SEPARATE, VALUE(DEFAULT="-"), DEFAULT
+		QUALIFIER STARTUP
+		QUALIFIER STOP
+		QUALIFIER SYSTEM, VALUE(TYPE=$NUMBER,DEFAULT="7")

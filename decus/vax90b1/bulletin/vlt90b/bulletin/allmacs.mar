@@ -1,0 +1,270 @@
+;
+;  Name: SETACC.MAR
+;
+;  Type: Integer*4 Function (MACRO)
+;
+;  Author: M. R. London
+;
+;  Date: Jan 26, 1983
+;
+;  Purpose: To set the account name of the current process (which turns out
+;	to be the process running this program.)
+;
+;  Usage:
+;	status = SETACC(account)
+;
+;	status		- $CMKRNL status return. 0 if arguments wrong.
+;	account		- Character string containing account name
+;
+;  NOTES:
+;	Must link with SS:SYS.STB
+;
+
+	.Title SETACC
+	.IDENT /830531/
+;
+;  Libraries:
+;
+	.LIBRARY	/SYS$LIBRARY:LIB.MLB/
+;
+;  Global variables:
+;
+	$PCBDEF
+	$JIBDEF
+;
+;  local variables:
+;
+
+	.PSECT	 DATA,NOEXE
+
+NEWACC:	.BLKB	12				; Contains new account name
+;
+;  Executable:
+;
+	.PSECT	CODE,EXE,NOWRT	; Executable code
+
+	.ENTRY	SETACC,^M<R2,R3,R4,R5,R6,R7>
+	CLRL	R0				; 0 is error code
+	MOVZBL	(AP),R6				; Get number of arguments
+	CMPL	R6,#1				; Correct number of arguments?
+	BNEQ	5$				; If not, return
+	MOVZBL	@4(AP),R6			; Get size of string
+	MOVL	4(AP),R7			; Get address of descriptor
+	MOVL	4(R7),R7			; Get address of string
+	MOVC5	R6,(R7),#32,#8,NEWACC		; Get new account name string
+	$CMKRNL_S ROUTIN=10$			; Must run in kernel mode
+5$:	RET
+10$:	.WORD	^M<>				; Entry mask
+	MOVL	@#CTL$GL_PCB,R6			; Address of current process
+	MOVL	PCB$L_JIB(R6),R6		; Address of Job Info Block
+						; NOTE: MOVC destroys r0-r5
+	MOVC3	#8,NEWACC,JIB$T_ACCOUNT(R6) 	; change account JIB
+	MOVC3	#8,NEWACC,CTL$T_ACCOUNT 	; change account in P1
+	MOVZWL	#SS$_NORMAL,R0			; Normal ending
+	RET
+;
+;  Name: SETUIC.MAR
+;
+;  Type: Integer*4 Function (MACRO)
+;
+;  Author: M. R. London
+;
+;  Date: May 31, 1983
+;
+;  Purpose: To set the UIC of the current process (which turns out
+;	to be the process running this program.)
+;
+;  Usage:
+;	status = SETUIC(group number, user number)
+;
+;	status		- $CMKRNL status return. 0 if arguments wrong.
+;	group number	- longword containing UIC group number
+;	user number	- longword containing UIC user number
+;
+;  NOTES:
+;	Must link with SS:SYS.STB
+;
+
+	.Title SETUIC	Set uic
+	.IDENT /830531/
+;
+;  Libraries:
+;
+	.LIBRARY	/SYS$LIBRARY:LIB.MLB/
+;
+;  Global variables:
+;
+	$PCBDEF
+;
+;  Executable:
+;
+	.PSECT	SETUIC_CODE,EXE,NOWRT	; Executable code
+
+	.ENTRY SETUIC,^M<R2,R3>
+	CLRL	R0				; 0 is error code
+	MOVZBL	(AP),R2				; Get number of arguments
+	CMPL	R2,#2				; Are there 2 arguments
+	BNEQ	5$				; If not, return
+	MOVL	@4(AP),R3			; Group number into R3
+	ROTL	#16,R3,R3			; Move to upper half of R3
+	ADDL2	@8(AP),R3			; User number to top half of R3
+	$CMKRNL_S ROUTIN=10$			; Must run in kernel mode
+5$:	RET
+10$:	.WORD	^M<>				; Entry mask
+	MOVL	@#CTL$GL_PCB,R2			; Address of current process
+	MOVL	R3,PCB$L_UIC(R2)		; Set UIC to specified
+	MOVZWL	#SS$_NORMAL,R0			; Normal ending
+	RET
+;
+;  Name: SETUSER.MAR
+;
+;  Type: Integer*4 Function (MACRO)
+;
+;  Author: M. R. London
+;
+;  Date: Jan 26, 1983
+;
+;  Purpose: To set the Username of the current process (which turns out
+;	to be the process running this program.)
+;
+;  Usage:
+;	status = SETUSER(username)
+;
+;	status		- $CMKRNL status return. 0 if arguments wrong.
+;	username	- Character string containing username
+;
+;  NOTES:
+;	Must link with SS:SYS.STB
+;
+
+	.Title SETUSER	Set uic
+	.IDENT /830531/
+;
+;  Libraries:
+;
+	.LIBRARY	/SYS$LIBRARY:LIB.MLB/
+;
+;  Global variables:
+;
+	$PCBDEF
+	$JIBDEF
+;
+;  local variables:
+;
+
+	.PSECT	 SETUSER_DATA,NOEXE
+
+NEWUSE:	.BLKB	12				; Contains new username
+OLDUSE: .BLKB	12				; Contains old username
+;
+;  Executable:
+;
+	.PSECT	SETUSER_CODE,EXE,NOWRT	; Executable code
+
+	.ENTRY	SETUSER,^M<R2,R3,R4,R5,R6,R7,R8>        
+	CLRL	R0				; 0 is error code 
+	MOVZBL	(AP),R8				; Get number of arguments
+	CMPL	R8,#1				; Correct number of arguments
+	BLSS	5$				; If not, return
+	MOVZBL	@4(AP),R6			; Get size of string
+	MOVL	4(AP),R7			; Get address of descriptor
+	MOVL	4(R7),R7			; Get address of string
+	MOVC5	R6,(R7),#32,#12,NEWUSE		; Get new username string
+	CMPL	R8,#2				; Old username given?
+	BLSS	2$				; No
+	MOVZBL	@8(AP),R6			; Get size of string
+	MOVL	8(AP),R7			; Get address of descriptor
+	MOVL	4(R7),R7			; Get address of string
+	MOVC5	R6,(R7),#32,#12,OLDUSE		; Get old username string
+	$CMKRNL_S ROUTIN=20$		   	; Must run in kernel mode
+	TSTL	R0				; If old username is checks with
+   	BEQL	2$				; present process name, change
+	MOVL	#2,R0				; to new username, else flag
+	RET					; error and return
+2$:	$CMKRNL_S ROUTIN=10$			; Must run in kernel mode
+5$:	RET
+10$:	.WORD	^M<>				; Entry mask
+	MOVL	@#CTL$GL_PCB,R7			; Address of current process
+	MOVL	PCB$L_JIB(R7),R7		; Address of Job Info Block
+						; NOTE: MOVC destroys r0-r5
+	MOVC3	#12,NEWUSE,JIB$T_USERNAME(R7) 	; change username JIB
+	MOVC3	#12,NEWUSE,CTL$T_USERNAME 	; change username in P1    
+	MOVZWL	#SS$_NORMAL,R0			; Normal ending
+	RET
+20$:	.WORD	^M<>				; Entry mask
+	MOVL	@#CTL$GL_PCB,R7			; Address of current process
+	MOVL	PCB$L_JIB(R7),R7		; Address of Job Info Block
+						; NOTE: MOVC destroys r0-r5
+	CMPC	R6,OLDUSE,JIB$T_USERNAME(R7) 	; change username JIB
+	RET
+
+
+	.TITLE	READ_HEADER - Read Image Header
+	.IDENT	/1-001/
+
+; This subroutine returns the image identification and link time.
+;
+; Format:
+;
+;   status.wlc.v = READ_HEADER( ident.wt.ds [,time.wt.ds] )
+;
+; Parameters:
+;
+;   ident	The image identification text.
+;
+;   time	The image link time (text format).
+
+
+;   Date	By		Comments
+;  4/10/87	D.E. Greenwood	Originally written by John Miano, 24-June-1986 -
+;				obtained from April 87 DECUS L&T Sig Newsletter
+	.LIBRARY	"SYS$LIBRARY:LIB"
+
+	$DSCDEF
+	$IHDDEF
+	$IHIDEF
+	$SSDEF
+
+; Argument pointer offsets
+
+	$OFFSET 4,POSITIVE,<IDENT,TIME>
+
+	.PSECT READ_HEADER, RD, NOWRT, EXE, LONG
+	.ENTRY READ_HEADER, ^M< R2, R3, R4, R5, R6, R7, R8, R11 >
+
+	CMPL	(AP),#1 		; Make sure that there is at least
+	BGEQ	ENOUGH_ARGUMENTS	;  one argument to this routine
+	MOVL	#SS$_INSFARG, R0
+	RET
+
+ENOUGH_ARGUMENTS:
+
+; Get the identification of the image.
+
+	MOVL	@#CTL$GL_IMGHDRBF, R11	; R11 - Address of image buffer
+	MOVL	(R11), R6		; R6  - Address of image header
+
+	CVTWL	IHD$W_IMGIDOFF(R6), R7
+	MOVAB	(R6)[R7], R7		; R7 - Address of ID Block
+
+	CVTBL	IHI$T_IMGID(R7),R0	; Length of the ID string
+	MOVL	IDENT(AP), R8
+	MOVC5	R0, <IHI$T_IMGID+1>(R7), #32, -
+		DSC$W_LENGTH(R8), @DSC$A_POINTER(R8)
+
+	CMPL	(AP), #2
+	BGEQ	RETURN_TIME
+	MOVZBL	#1, R0
+	RET
+
+RETURN_TIME:
+
+; Get the time the image was linked and convert it to ASCII
+
+	$ASCTIM_S -
+		TIMBUF=@TIME(AP), -
+		TIMADR=IHI$Q_LINKTIME(R7)
+
+	RET
+
+	.END

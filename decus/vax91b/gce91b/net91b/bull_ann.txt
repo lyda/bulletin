@@ -1,0 +1,412 @@
+From:	AITGW::"BULLETIN@ORYANA.PFC.MIT.EDU" 26-SEP-1991 16:10:22.31
+To:	ARISIA::EVERHART
+CC:	
+Subj:	BULLETIN utility.
+
+Received: by AITGW.DECnet (utk-mail11 v1.5) ; Thu, 26 Sep 91 16:10:22 EDT
+Received: from ORYANA.PFC.MIT.EDU by aitgw.ge.com (5.65/GE Gateway 1.4)
+	id AA03731; Thu, 26 Sep 91 16:09:04 -0400
+Message-Id: <0C62FFB72B2FC0142E@ORYANA.PFC.MIT.EDU>
+Date: Thu, 26 Sep 91 15:20 EST
+From: BULLETIN@ORYANA.PFC.MIT.EDU
+Subject: BULLETIN utility.
+To: ARISIA::EVERHART
+X-Envelope-To: EVERHART@ARISIA.dnet.ge.com
+X-Vms-To: IN%"EVERHART@ARISIA.dnet.ge.com"
+ 
+You  are  about  to  receive  version  2.06  of the PFC BULLETIN.
+ 
+BULLETIN   is   public   domain   software.    (I   will  gladly  accept
+recommendations for new features,  not  for  changes  that  are  due  to
+"personal" preference.)
+ 
+As of V2.0, BULLETIN is able to read USENET NEWS via TCP/IP using either
+CMU, MULTINET, UCX, TWG, or via DECNET.  It can also serve as a NEWS
+gateway for DECNET nodes without direct access to the NEWS server, i.e. a
+DECNET node without Internet access will be able to read NEWS.
+ 
+NOTE: The following commands can be sent to BULLETIN@ORYANA.PFC.MIT.EDU:
+	SEND ALL [SINCE time]	Sends all bulletin files.
+				If SINCE time specified, only files created
+				since that time will be sent.
+	SEND filename		Sends the specified file.	
+	BUGS			Sends a list of the latest bug fixes.
+	HELP or INFO		Sends a brief description of BULLETIN.
+	SUBSCRIBE               Subscribes to mailing list for upgrade
+                                notifications.
+        UNSUBSCRIBE             Unsubscribes from mailing list.
+ 
+There  is  also  a documentation file written by Chris Tanner from Chalk
+River Nuclear Labs which can  be  used  as  handout.   To  obtain  this,
+request the  file BULLETIN.DOC.  (This does not describe the NEWS reader
+feature, however.)
+ 
+NOTE:  An old bug might have changed the protection on the BULLETIN data
+files.  The protection on all data files (i.e.  B*.DAT,  *.BULLFIL,  and
+*.BULLDIR) should be (RWED,RWED,,).
+ 
+This  version  includes  all  necessary  modifications to work under VMS
+V5.0.  However, it will still be necessary to reassemble the ALLMACS.MAR
+source  under  V5  and  relink.   The V4 version will not be installable
+under V5 due to a change  in  a  shared  library  which  BULLETIN  uses.
+However,  relinking  by  itself  will  not  be  enough.   You  MUST also
+reassemble ALLMACS.MAR.  If you only relink,  BULLETIN  can  cause  your
+system  to  crash  (the  BULLCP process will do this because it uses the
+routines in ALLMACS.MAR).
+ 
+If you are running a version of BULLETIN older than 1.52,  this  version
+will  modify  the  format of some of the data files.  (This will be done
+automatically  when  the  new  version  is   run).    After   successful
+installation,  the  older  versions of these files can be removed.  This
+format change can take a significant amount of time  if  the  folder  is
+large.   If  your  site  has large folders, it is suggested that the new
+version be installed during off peak hours.   NOTE: Problems  can  occur
+if  the  old  version  of BULLETIN is run after the data files have been
+modified.  Such a situation is possible on a cluster where each node has
+installed  the  executable  separately.   To  help  installation,  a new
+command procedure INSTALL_REMOTE.COM has been  included.   This  can  be
+used  to install BULLETIN on several nodes from a single node.  Read the
+comments in the file for information on how to use it.
+ 
+NOTE: The BULLCP process  should  be  stopped  using  the  BULLETIN/STOP
+command before the new version of BULLETIN is installed.  It can then be
+restarted using the BULLETIN/STARTUP command.   (The  INSTALL_REMOTE.COM
+command procedure does this automatically for remote nodes.)
+ 
+You will be receiving 20 files (NOT NECESSARILY IN THIS ORDER!):
+	1) BULLETIN.FOR
+	2) BULLETIN0.FOR
+	3) BULLETIN1.FOR
+	4) BULLETIN2.FOR
+	5) BULLETIN3.FOR
+	6) BULLETIN4.FOR
+	7) BULLETIN5.FOR
+	8) BULLETIN6.FOR
+	9) BULLETIN7.FOR
+	10) BULLETIN8.FOR
+	11) BULLETIN9.FOR
+	12) BULLETIN10.FOR
+	13) BULLETIN11.FOR
+	14) ALLMACS.MAR
+	15) BULLCOMS1.HLP
+	16) BULLCOMS2.HLP
+	17) BULLET1.COM
+	18) BULLET2.COM
+	19) PMDF.COM
+	20) MX.COM
+ 
+(They will be  identified  in  the  SUBJECT  header.)   BULLET1.COM  and
+BULLET2.COM  are  command procedures which when run, will create several
+small files.  After you run them, you can delete them.  If you have PMDF
+at  your  site, you should also run PMDF.COM.  Otherwise, you can delete
+it.  The same applies to  MX.   Then,  read  AAAREADME.TXT  for  BULLETN
+installation instructions.
+ 
+NOTE: When creating these files (using the EXTRACT command) from the VMS
+MAIL utility, you will have to strip  off  any  mail  headers  that  are
+present,  including blank lines.
+                                              MRL@NERUS.PFC.MIT.EDU
+--------------------------------------------------------------------------
+Add REPLY option to READNEW feature when reading messages.  Also, really fix
+the REPLY command, as mentioned in V2.06.  8/11/91
+ 
+V 2.06
+ 
+Added code to keep track of which messages have been read a per message basis. 
+Added SEEN & UNSEEN commands.  Added /SEEN, /UNSEEN, and /UNMARKED to
+DIRECTORY, INDEX, READ, and SELECT commands.  Modified directory listing to
+indicate which messages have been SEEN.  7/31/91 
+ 
+Added /NOW to PRINT command.  Messages no longer have to be printed one message
+at a time.  It now works identical to VMS MAIL.  7/31/91
+ 
+Added code to NEWS users when new groups have been created.  User will be
+alerted when selecting a news group that new groups are present, and will be
+instructed to type NEWS/NEWGROUP in order to see them.  7/31/91
+ 
+Added /PRINT to DIRECTORY command to allow printing of messages which are found
+by using the DIRECTORY command.  7/31/91
+ 
+Modified directory listing display so that the first and last message in the
+folder are now displayed at the top.  Fixed bug which truncated very large news
+group names.  7/31/91
+ 
+Added FIRST command to read first message found in folder.  7/31/91
+ 
+Modified REPLY command for folders associated with mailing lists, so that the
+reply message to the mailing list rather than adding a local message.  7/31/91
+ 
+Modified code to correctly store subject headers from BBOARD mail which are
+more than one line long.  Previously, the subject would be truncated.  6/18/91
+ 
+V 2.05
+ 
+The MARK code was modified to work with NEWS folders.  6/3/91
+ 
+Added /FOLDER=(folder,[...]) to the SEARCH command to allow searching more than
+one folder at a time.  6/13/91
+ 
+NEWS/SUBSCRIBED listing was fixed.  If the list could not fit on a single page,
+a folder was skipped when the next page was shown.  6/3/91
+ 
+INDEX was fixed.  If it was used with the qualifiers /NEW or /MARK, and the
+directory listing of a folder was displayed, and then RETURN is entered to 
+skip to the next folder, the directory display of the next folder would be
+incorrect.  6/3/91 
+ 
+Fixed broadcast bug.  If a message was added with /BROADCAST to a remote folder
+from a node in a cluster which was not the node that BULLCP was running on. 
+The broadcast would appear twice on the cluster.  5/24/91
+ 
+Added code to alert user if message too large to be fully broadcasted.  5/24/91
+ 
+Added code to avoid erroneous notifications of new messages for an empty NEWS
+group.  Unlike a similar fix in V2.03 which was due to a bug, this fix may not
+affect all sites, as it depends on the behavior of the server.  5/22/91 
+ 
+Fixed NEWS to FOLDER feed.  A recent change broke it.  5/22/91
+ 
+Added /EDIT qualifier for MAIL.  5/20/91
+ 
+Added /HEADER qualifier for LAST, BACK, and CURRENT commands.  5/19/91
+ 
+Added TWG (Wollongong) interface for NEWS.  5/18/91
+ 
+Fixed bug which truncated subject headers of messages created when using REPLY
+and RESPOND to messages which have long subject lines.  5/12/91
+ 
+V2.04
+ 
+Added ALWAYS attribute for folders.  Any SYSTEM messages in a folder in which
+ALWAYS has been set will be displayed every time a user logs in, rather than
+just once.  Also, non-SYSTEM messages will be displayed continuously (via
+whatever mode is set, i.e. READNEW, SHOWNEW, or BRIEF) until it is actually
+read.  4/29/91 
+ 
+Added capability of controlling the time between updates for BBOARD and NEWS in
+BULLCP by defining the logical names BULL_BBOARD_UPDATE or BULL_NEWS_UPDATE to
+the number of minutes of desired time in minutes. 4/27/91
+ 
+Added /GROUPS= qualifier to all commands which post to NEWS groups. 4/26/91
+ 
+Fixed bug which prevented SET SHOWNEW or READNEW from working with subscribed
+news group folders. 4/25/91
+ 
+V2.03
+ 
+Added /FOLDER to SHOW USER in order to show the latest message that a user
+has read in the specified folder.  Also added /SINCE and /START (the former
+for real folders, the latter for news groups).  4/11/91
+ 
+Fixed logic so that defining BULL_NEWS_ORGANIZATION will override the
+definition defined in BULLNEWS.INC.  4/10/91
+ 
+Fixed SEARCH command, as it broke in V2.02 when /EDIT was added to read
+message commands.  There is a missing QUALIFIER EDIT in BULLCOM.CLD for the
+SEARCH verb.  /EDIT now works with SEARCH.  4/9/91
+ 
+Fixed bug in BULLCP which prevented the DECNET/INTERNET NEWS gateway software
+from working with UCX.  4/9/91 
+ 
+Fixed bug caused by V2.00 which caused incorrect listing of message during
+BULL/LOGIN for remote folders.  4/3/91
+ 
+Fixed bugs which caused erroneous new message notifications for subscribed
+NEWS groups that were empty.	3/27/91
+ 
+V 2.02
+ 
+Include BBOARD support for MX (courtesy of goathunter@wkuvx1.bitnet).
+ 
+Changed BBOARD algorithm so that it is now possible to have only one real
+BBOARD account, and have all the others be VMS MAIL forwarding entries.
+See HELP SET BBOARD MORE_INFO for more info (it's been updated).
+ 
+Added hook to allow postings from BULLETIN to a LISTSERV mailing list to use
+the BBOARD account from it was subscribed to.  See HELP SET BBOARD LISTSERV.
+ 
+Fixed many bugs in POST, REPLY, and RESPOND.
+ 
+Fixed /ALL for COPY, PRINT, and EXTRACT when using NEWS groups.
+ 
+Included RMS optimizer procedure for indexed files to optimize BULLNEWS.DAT
+to speed up NEWS updates.  Can be used on other files (in particular
+BULLINF.DAT) in order to save space.
+ 
+Add /EDIT to BACK, NEXT, LAST, and when entering message number.
+ 
+Modify ADD/REPLY command to local (non-NEWS) folders so if there are new
+messages present, it doesn't reset the newest message count.  Previously,
+adding a message would reset the user's last read message date to that message
+in order to avoid notifying the user of new messages due to the user's own
+message. 
+ 
+Fixed code so that when reading new messages, and if READ/EDIT or DELETE/IMMED-
+IATE IS entered, a carriage return will read the next new message.  Previously
+the wrong message would be displayed.
+ 
+V 2.01
+ 
+Fixed many bugs associated with USENET NEWS reading feature.
+ 
+Added UCX interface for NEWS.
+ 
+Added signature file for POST and RESPOND messages.
+ 
+Added capability to specify file name for POST, REPLY, and RESPOND.
+ 
+Added the line "In a previous message, <message-owner> wrote:" to the
+beginning of a message when /EXTRACT is specified
+ 
+Added hook for network mail to run command procedure rather then using
+VMS MAIL.  BULL_MAILER can be defined to point to the procedure, and it
+is called with the username and subject as the parameters.
+ 
+V 2.00
+ 
+Added USENET NEWS reading feature.
+ 
+V 1.93
+ 
+Fixed bug which wouldn't allow a permanent message to be added by a
+non-privileged user in a remote folder (the folder had been setup to allow
+permanent messages from non-privileged users, of course). 
+ 
+Fixed bug which causes the DELETE command not to delete a SHUTDOWN message
+without the use of /IMMEDIATE.
+ 
+Fixed the algorithm which prevented duplicate notification of messages in
+remote folders on different nodes, as duplication was still possible.
+ 
+V 1.92
+ 
+Fixed bug which causes BULLCP to loop when trying to cleanup a folder which
+has more than 127 identifiers granted access to a folder.  Also correct
+SHOW FOLDER/FULL, which had a similar problem when trying to display the
+identifiers.
+ 
+Fix PMDF interface to recognize to recognize PMDF_PROTOCOL.
+ 
+V 1.91
+ 
+Disallow SPAWN command for CAPTIVE account.
+ 
+Fix MAIL command to correctly allow passing addresses with quotes, i.e.
+IN%"""MRL@NERUS.PFC.MIT.EDU""".
+ 
+V 1.90
+ 
+SET NOTIFY now works for remote folders.
+ 
+Avoid generating notification message due to SET NOTIFY flag if the message
+was broadcasted when added using ADD/BROADCAST.
+ 
+Bug in DIR/SINCE for remote folders fixed.  If no new messages were present,
+it would incorrectly show messages.
+ 
+Added /FF to EXTRACT command to seperate messages in the file with form feeds.
+ 
+Allow specifying CURRENT and LAST when specifying a range of messages for
+commands that accept a range, i.e. EXTRACT 1-CURRENT, CURRENT-LAST, etc.
+ 
+Open folder files with READONLY when not writing to them in order to avoid
+changing modification date, which results in unnecessary backups.
+ 
+Modify HELP so that it won't prompt for Subtopic is there is none.
+ 
+Prevent screen from being erased after exiting HELP.
+ 
+Fix bug which causes CREATE/NOTIFY to crash.
+ 
+SET NOTIFY/CLUSTER has been removed.  As of VMS V5.2, it is possible to obtain
+the list of users logged in to all nodes of a cluster, so this qualifier is no
+long necessary.  NOTE: You can delete all the BULL_DIR:*.NOTIFY files, as they
+are no longer used.
+ 
+BULLETIN now will use the editor specified by the SET EDITOR command within
+MAIL for editing messages.
+ 
+Typing BACK after typing a DIRECTORY command will now show the previous 
+DIRECTORY display entries rather than reading the previous message.
+ 
+Several bugs related to the MARK command were fixed.  Also the software has been
+optimized so that scanning for MARKed messages should take less time.
+ 
+/EXPIRATION added to DIRECTORY command to show expiration rather than creation
+date of messages.
+ 
+Any BULLETIN interactive command can be executed at DCL level by typing
+BULLETIN "command" or BULLETIN "command1;command2;etc.".
+ 
+The CHANGE command has been modified so a range of message can be specified,
+i.e. /NUMBER=1-10.  Also, the code incorrectly misinterpreted /TEXT as meaning
+to extract the old text message, whereas it should have meant that only the
+text was to be changed.  This prevented a user from specifying that only the
+text should be changed if that user didn't have editing enabled.  This has been
+fixed.  To eliminate confusing, the /TEXT qualifier on the ADD command has been
+removed (previously it was a synonym for /EXTRACT). 
+ 
+SHOW FOLDER/FULL display of access IDs was fixed to correctly display UICs.
+ 
+Removed security hole which occurs if you are using the old method of accessing
+a remote node via /NODES (it would have required looking a the sources to find,
+which one installer did and was worried about).  Because of this, if you use
+this old method (i.e. via BULLETIN.COM), the object BULLETIN must be installed
+in the NCP database pointing to the file BULLETIN.COM, i.e. the command
+"MCR NCP SET BULLETIN FILE directory:BULLETIN.COM NUMBER 0" must be executed
+during the system startup.
+ 
+Fixed bug in /LOGIN display when erasing page if terminal is hardcopy.  No
+page would be erased (of course), and the next line outputted would start where
+the previous line left off, rather than starting on a new line.
+ 
+Added BULLETIN/WIDTH=page_width for users who have BULLETIN/LOGIN in their
+login procedure before the terminal is known, and whose default page width is
+larger (i.e. 132) than what the terminals are (i.e. 80).
+ 
+Added BULLETIN/PGFLQUOTA and /WSEXTENT in order to set those quotas for the
+BULLCP process.
+ 
+Added ATTACH command.
+ 
+Modify SET STRIP so that it saves the date that the message was sent and
+leaves it at the to of the message.
+ 
+BULLETIN will search BBOARD message headers for a line that starts with
+"Expires:" or "X-Expires:", followed by a date (DD MMM YYYY or similar).  It if
+finds that line, it will use that date as the expiration date of the message. 
+ 
+Added /REPLY to SEARCH command.  Modified so that it's possible to abort out of
+a /SUBJECT or /REPLY search using CTRL-C (previous possible only if searching
+the text for a string.  Also, if you hit CTRL-C at the wrong time, BULLETIN
+would abort totally rather than just aborting the search). 
+ 
+Added /SEARCH= /SUBJ= and /REPLY to the DIRECTORY command.  Basically this is
+combining the DIRECTORY and SEARCH commands.
+ 
+Fixed design flaw which allowed the following to occur:  If a folder is a
+remote system folder, when BULLETIN/LOGIN was executed, the same messages might
+be displayed on both the local and remote nodes.  BULLETIN now will know that
+the user has seen the message on one node and will not display it if that user
+logs in on the other node.
+ 
+Optimized code which caused slow display of new messages when executing
+BULLETIN/LOGIN without /REVERSE for a remote folder.
+ 
+Added /PERMANENT to SET NOTIFY, SHOWNEW, BRIEF, and READNEW.  The affect is
+that users will not be allowed to change the setting.  The main intent here
+was to allow the removal ofthe permanent setting of SHOWNEW from the GENERAL
+folder.
+ 
+Fixed bug which would cause a SYSTEM message not to be shown if SET BRIEF was
+selected for that folder, and a non-SYSTEM message was also present.
+ 
+Added SET CONTINUOUS_BRIEF.  This causes the SET BRIEF setting to show that
+there are unread new messages every time BULLETIN/LOGIN is executed, rather
+than just the one time.  The BRIEF notification code has also been optimized
+so that it'll take less time to notify you of new messages.
+ 
+A major bug was fixed which was introduced in previous mods to speed up
+BULLETIN/LOGIN.  The effect is that no notifications will appear for certain
+folders via BULLETIN/LOGIN.  This would only happen if a folder was removed at
+some time.

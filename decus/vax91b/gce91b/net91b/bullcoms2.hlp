@@ -1,0 +1,1025 @@
+1 POST
+If a NEWS group is selected, posts a message to that group.  If a normal
+folder is selected, sends a message via MAIL to the network mailing list
+which  is  associated  with  the  selected  folder.   The address of the
+mailing  list  must  be  stored  using  either   CREATE/DESCRIPTION   or
+MODIFY/DESCRIPTION.  See help on those commands for more information.
+ 
+  Format:
+    POST [file-name]
+2 /CC
+ /CC=user[s]
+Specifies additional users that should receive the mail message.
+2 /EDIT
+Specifies that the editor is to be used for creating the mail message.
+2 /EXTRACT
+Specifies that the text of the message that is being read should be
+included in the mail message.  This qualifier is valid only when used
+with /EDIT.  The text of the message is indented with > at the
+beginning of each line.  This can be suppressed with /NOINDENT.
+2 /GROUPS
+ /GROUPS=(newsgroup,[...])
+ 
+Valid only if a NEWS group is selected.  Specifies to send the message to
+the specified NEWS group(s) in addition to the selected NEWS group.
+2 /NOINDENT
+See /EXTRACT for information on this qualifier.
+2 /SUBJECT
+ /SUBJECT=text
+ 
+Specifies the subject of the mail message. If the text consists of more
+than one word, enclose the text in quotation marks (").
+ 
+If you omit this qualifier, you will prompted for the subject.
+2 Signature_file
+It is possibly to have the contents of a file be automatically appended
+to the end of a message added with the POST and/or the RESPOND command.
+This file is known as a signature file, and it typically contains one's
+name, address, or perhaps a favorite quote.  The name of the file should
+be SYS$LOGIN:BULL_SIGNATURE.TXT, and it should be a simple text file.  In
+order to specify a different file to use, define the logical name
+BULL_SIGNATURE to point to the desired file.
+ 
+It is possible to specify that portions or all of the signature file are
+to be included only for specific folders or news groups.  Simply surround
+the exclusive text starting with the line "START <folder-name>" and ending
+with the line "END", i.e.
+ 
+START INFOVAX
+This line will only appear in the INFOVAX folder.
+END
+START MISC.TEST
+This line will only appear in the news folder MISC.TEST.
+END
+This line will appear in all postings.
+ 
+Note that an empty line is automatically created to separate the text of
+the message and the contents of the signature file.
+1 PRINT
+Queues a copy of the message you are currently  reading  (or  have 
+just read)  for  printing.   The file(s) created by the PRINT command
+are not released to the print queue until you exit  from  MAIL.
+Multiple messages are concatenated into one print job. The PRINT
+command can take optional qualifiers. 
+ 
+   Format:
+ 
+       PRINT [message_number][-message_number1]
+ 
+A range of messages to be printed can optionally be specified, i.e.
+FILE 2-5.
+ 
+The key words CURRENT and LAST can also be specified in the range,
+in place of an actual number, i.e. CURRENT-LAST, 1-CURRENT, etc.
+ 
+NOTE:  The qualifier /PRINT is present on the DIRECTORY command.  This
+provides more flexibility than is present with the PRINT command.  For
+example, if you want to print all messages with a particular string in
+it's subject line, DIRECTORY/PRINT/SUBJ would allow you do it.
+2 /ALL
+Prints all the messages in the current folder.
+2 /FORM
+Specifies the name or number of the form that you want for the print
+job.  Codes for form types are installation-defined.  You can use the
+SHOW QUEUE/FORM command at DCL level to find out the form types
+available for your system.  Use the SHOW QUEUE/FULL command at DCL
+level to find out the name of the mounted form and the default form for
+a particular queue.  If you specify a form whose stock is different
+from the stock of the form mounted on the queue, your job is placed in
+a pending state until the stock of the mounted form of the queue is
+set equal to the stock of the form associated with the job.  (In order
+to have your job print, the system manager should stop the queue,
+physically change the paper stock on the output device, and restart the
+queue specifying the new form type as the mounted form.)
+2 /HEADER
+ /[NO]HEADER
+ 
+Controls whether a header containing the owner, subject, and date of the 
+message is printed at the beginning. The default is to write the header.
+2 /NOTIFY
+ /[NO]NOTIFY
+ 
+Indicates that you will be notified by a broadcast message  when  the
+file or files have been printed.  If /NONOTIFY is specified, there
+is no notification.  The default is /NOTIFY.
+2 /NOW
+Sends all messages that have been queued for printing with the PRINT
+command during this session to the printer. 
+2 /QUEUE
+ /QUEUE=queue_name
+ 
+The name of the queue to which a message is to be sent.  If the /QUEUE
+qualifier  is  not  specified,  the message is queued to SYS$PRINT.
+1 READ
+Displays  the  specified message.  If you do not specify a message, then
+the first time you enter the command, the first message  in  the  folder
+will  be  displayed.   However, if there are new messages, the first new
+message will be displayed.  Each time you enter the  command,  the  next
+page, or if there are no more pages, the next message will be displayed.
+ 
+  Format:
+    READ [message-number]
+ 
+The message's relative number is found by the DIRECTORY command.
+If you specify a number greater than the number of messages in the
+folder, the last message in the folder will be displayed.
+ 
+NOTE: The READ command can be abbreviated by omitting the READ command,
+i.e. typing the command "2" is equivalent to "READ 2", and simply
+hitting the <RETURN> key is equivalent to "READ". 
+ 
+BULLETIN normally stores only the latest message that has been read per
+folder. It can optionally store and display which messages have been
+read in a folder on a per message basis.  For information on this, see
+the help on the SEEN command. 
+2 /ALL
+Specifies to read all messages.  Used after /MARKED, /UNMARKED, /SEEN,
+or /UNSEEN had been specified.
+2 /EDIT
+Specifies that the editor is to be used to read the message.  This is
+useful for scanning a long message.
+2 /HEADER
+ /[NO]HEADER
+ 
+Specifies that if a message header exists, the header will be shown.
+If /HEADER or /NOHEADER is specified, the setting will apply for all
+further reads in the selected folder.  The default is /HEADER for non-
+NEWS folders, /NOHEADER for NEWS folders.  If the SET STRIP command
+is set for the folder, it will change the default to be /HEADER.
+2 /MARKED
+Specifies to read only messages that have been marked (marked messages
+are indicated by an asterisk).  Using /MARKED is equivalent to
+selecting the folder with /MARKED, i.e. only marked messages will be
+shown and be able to be read.   To see all messages, use either /ALL,
+or reselect the folder. 
+2 /UNMARKED
+Specifies to read only messages that have not been marked (marked
+messages are indicated by an asterisk).  Using /UNMARKED is equivalent
+to selecting the folder with /UNMARKED, i.e. only unmarked messages
+will be shown and be able to be read.  To see all messages, either
+reselect the folder or specify /ALL.
+2 /SEEN
+Specifies to read only messages that have been seen (indicated by a
+greater than sign). Using /SEEN is equivalent to selecting the folder
+with /SEEN, i.e. only seen messages will be shown and be able to be
+read.  To see all messages, use either /ALL, or reselect the folder. 
+2 /UNSEEN
+Specifies to read only messages that have not been seen (seen message
+are indicated by a greater than sign). Using /UNSEEN is equivalent to
+selecting the folder with /UNSEEN, i.e. only unseen messages will be
+shown and be able to be read.  To see all messages, use either /ALL, or
+reselect the folder. 
+2 /NEW
+Specifies to read the first unread message.
+2 /PAGE
+ /[NO]PAGE
+ 
+Specifies that the display of the message will pause when it reaches the
+end of the page.  If /NOPAGE is specified, the whole message will be
+displayed.  This is useful for terminals that can store more than one
+screenful at a time, and that have a remote printer that can then print
+the contents of the terminal's memory.
+2 /SINCE
+ /SINCE=date
+ 
+Specifies to read the first message created on or after the specified
+date.  If no date is specified, the default is TODAY.
+1 REMOVE
+Removes a folder.  Only the owner of a folder or a privileged  user  can
+remove the folder.
+ 
+  Format:
+    REMOVE folder-name
+1 REPLY
+Adds message with subject of message being the subject of the  currently
+read message with "RE:" preceeding it.  Format and qualifiers is exactly
+the same as the ADD command except for /NOINDENT and /EXTRACT.
+ 
+  Format:
+    REPLY [file-name]
+2 /EXTRACT
+Specifies that the text of the message should be included in the reply
+mail message.  This qualifier is valid only when used with /EDIT.  The
+text of the message is indented with > at the beginning of each line.
+This can be suppressed with /NOINDENT.
+2 /NOINDENT
+See /EXTRACT for information on this qualifier.
+1 RESPOND
+Invokes the VAX/VMS Personal Mail Utility (MAIL) to send a reply mail
+message to the owner of the currently read message.
+ 
+  Format:
+    RESPOND [file-name]
+ 
+If you wish to use another method for sending the mail, define BULL_MAILER
+to point to a command procedure.  This procedure will then be executed in
+place of MAIL, and the parameters passed to it are the username and subject
+of the message.
+2 /CC
+ /CC=user[s]
+Specifies additional users that should receive the reply.
+2 /EDIT
+Specifies that the editor is to be used for creating the reply mail
+message.
+2 /EXTRACT
+Specifies that the text of the message should be included in the reply
+mail message.  This qualifier is valid only when used with /EDIT.  The
+text of the message is indented with > at the beginning of each line.
+This can be suppressed with /NOINDENT.
+2 /GROUPS
+ /GROUPS=(newsgroup,[...])
+ 
+Valid only if a NEWS group is selected and /LIST is present.  Specifies
+to send the message to the specified NEWS group(s) in addition to the
+selected NEWS group.
+2 /LIST
+Specifies that the reply should also be sent to the network mailing list
+associated with the folder.  The mailing list address should be stored
+in the folder description.  See CREATE/DESCRIPTION or MODIFY/DESCRIPTION
+for more informaton.
+2 /NOINDENT
+See /EXTRACT for information on this qualifier.
+2 /SUBJECT
+ /SUBJECT=text
+ 
+Specifies the subject of the mail message. If the text consists of more
+than one word, enclose the text in quotation marks (").
+ 
+If you omit this qualifier, the description of the message will be used
+as the subject preceeded by "RE: ".
+1 QUIT
+Exits the BULLETIN program.
+1 SEARCH
+Searches the currently selected folder for the  message  containing  the
+first occurrence of the specified text string.
+ 
+   Format:
+ 
+       SEARCH [search-string]
+ 
+The search starts from the first message in the current folder.  The
+search includes both the text of the message, and the description header.
+If a "search-string" is not specified, a search is made using the
+previously specified string, starting with the message following the
+one you are currently reading (or have just read).  Once started, a
+search can be aborted by typing a CTRL-C.
+2 /EDIT
+Specifies that the editor is to be used for reading the message.
+2 /FOLDER
+   /FOLDER=(folder,[...])
+ 
+Specifies a list of folders to be searched.  The search will start by
+selecting the first folder in the list and searching the messages for
+a match.  If, during a search, no more matches or messages are found,
+the next folder in the list is automatically selected.  The presently
+selected folder can be included in the search by specifying "" as the
+first folder in the list.
+2 /REPLY
+Specifies that messages are to be searched for that are replies to the
+currently read message, or the message specified by /START.  Replies are
+messages which have subject of the original message prefaced by "Re:".
+2 /REVERSE
+Specifies that the messages are to be searched in reverse order.  If
+no starting message is specified, the search is started from the last
+message.
+2 /START
+ /START=message_number
+ 
+Specifies the message number to start the search at.
+2 /SUBJECT
+Specifies that only the subject of the messages are to be searched.
+1 SEEN
+Sets the current or message-id message as seen. This allows you to keep
+track of messages on a per message basis.  Seen messages are displayed
+with a greater than sign in the left hand column of the directory
+listing.  Once you have used the SEEN command once, messages will be
+automatically be set as being SEEN when they are read.  The UNSEEN
+command sets the current or message-id message as unseen. 
+ 
+   Format:
+ 
+       SEEN [message-number or numbers]
+       UNSEEN [message-number or numbers]
+ 
+Keeping track of seen messages requires very little overhead for NEWS
+folders.  However, there is a moderate overhead for regular non-NEWS
+folders.  If you have used the SEEN command and wish to disable the
+automatic marking of messages in regular folders as SEEN when they are
+read, type the command SEEN/NOREAD.  To reenable, simply use the SEEN
+command again. 
+ 
+NOTE: The list of SEEN messages for non-NEWS folders are stored in a
+file username.BULLMARK, and NEWS folders are stored in
+username.NEWSMARK. The files are created in the directory pointed to by
+the logical name BULL_MARK.  If BULL_MARK is not defined, SYS$LOGIN
+will be used. 
+1 SELECT
+Selects a folder of messages.  See HELP Folders for a description  of  a
+folder.   Once a folder has been selected, all commands, i.e. DIRECTORY,
+READ, etc. will apply only to those messages.  Use the CREATE command to
+create  a  folder.   Use the DIRECTORY/FOLDER command to see the list of
+folders that have been created.
+ 
+ Format:
+ 
+     SELECT [node-name::][folder-name]
+ 
+The complete folder name need not be specified.  BULLETIN  will  try  to
+find the closest matching name.  I.e. INFOV can be used for INFOVAX.
+ 
+Omitting the folder name will select the default general messages.
+ 
+The  node  name can be specified only if the remote node has the special
+BULLCP process running (invoked by BULLETIN/STARTUP command.)
+ 
+After selecting a folder, the user will notified of the number of unread
+messages,  and  the  message  pointer will be placed at the first unread
+message.
+ 
+BULLETIN automatically determines if the selcted name is a NEWS group by
+detecting if a period is present in the name being  specified,  as  most
+NEWS  groups  contain  a  period,  whereas  a real folder cannot.  A few
+special NEWS groups, i.e. JUNK and CONTROL, do not contain a period.  If
+desired,  you can select these groups by enclosing them in double quotes
+("), and typing the name in lower case.
+2 /MARKED
+Selects  only messages that have been marked (indicated by an asterisk).
+After using /MARKED, in order to see all messages, the folder will  have
+to be reselected.
+1 SET
+The SET command  is  used  with  other  commands  to  define  or  change
+characteristics of the BULLETIN Utility.
+ 
+  Format:
+ 
+    SET option
+2 ACCESS
+Controls  access  to  a  private  folder.   A private folder can only be
+selected by users who have been granted access.  Only the owner of  that
+folder is allowed to grant access.
+ 
+  Format:
+ 
+    SET [NO]ACCESS id-name [folder-name]
+ 
+The id-name can be one or more ids from the system Rights  Database  for
+which  access  is  being  modified.   It  can  also be a file name which
+contains a list of  ids.   For  more  information  concerning  usage  of
+private  folders, see HELP CREATE /PRIVATE.  NOTE: Access is created via
+ACLs.  If a user's process privileges are set  to  override  ACLs,  that
+user  will  be  able  to  access  the folder even if access has not been
+granted.
+ 
+It  is suggested that if you plan on granting access to many users, that
+you create an id using the AUTHORIZE utility and then use the SET ACCESS
+command  to  grant  access  to  that id.  Then, you can use the GRANT/ID
+command in AUTHORIZE to grant the id to users, and this will give  those
+users  access to the folder.  This is preferred because of problems with
+running into system quota when checking for acls on a file with a  large
+amount  of  acls.   It  is also means that you don't have to remember to
+remove the access for that user from a folder if that  user  is  removed
+from the system.
+ 
+A user with BULLETIN privileges (see HELP SET  PRIV)  will  be  able  to
+select a protected folder regardless of the access settings.  However, a
+user without explicit access will not receive login notifications of new
+messages,  and thus will not be able to set any login flags.  (NOTE:  If
+such a user selects such a folder and then uses SET ACCESS to grant  him
+or  herself  access,  the user must reselect the folder in order for the
+new access to take affect in order to be able to set login flags.)
+3 id
+The id-name can be one or  more  ids  contained  in  the  system  Rights
+Database.   This  includes  usernames  and  UICs.  A UIC that contains a
+comma must be enclosed in quotes.   UICs  can  contain  wildcards,  i.e.
+"[130,*]".   Note that by default, a process is given the process rights
+id SYS$NODE_nodename, where nodename is the decnet nodename.   Thus,  by
+specifing  this id, a folder can be restricted to a specific node, which
+is useful when the folder is shared among nodes in a cluster.
+ 
+Alternatively,  the  id-name  can be a filename which contains a list of
+ids.  The filename should be preceeded by a "@".  If the suffix  is  not
+specified, it will be assumed that the suffix is ".DIS" .
+3 /ALL
+Specifies that access to the folder is granted to all users.   If  /READ
+is  not  specified,  the  folder will no longer be private.  If /READ is
+specified, all users will have read access, but  only  privileged  users
+will  have  write access (of course non-privileged users can gain access
+via a later SET ACCESS command.)
+ 
+Format:
+ 
+    SET ACCESS /ALL [folder-name]
+3 /READ
+Specifies that access to the folder will be limited to being able to
+read the messages.
+3 Warning
+If  a  user  logs  in after a private folder has been created but before
+being given access, and then is given  access,  any  defaults  that  the
+folder  has,  i.e. /BRIEF, /READNEW, & /NOTIFY, will not be set for that
+user. This is because if the  id  is  not  a  username,  it  becomes  an
+extremely  lengthy  operation  to check each user to see if have that id
+assigned to them.  The alternative is to set the defaults for all  users
+after  every  SET  ACCESS,  but that might cause problems with users who
+have manually reset those defaults.  The  correct  solution  requires  a
+large programming modification, which will be done in a later version.
+2 ALWAYS
+Specifies  that  the  selected  folder  has  the ALWAYS attribute.  This
+causes messages in the folder to be displayed differently  when  logging
+in.  SYSTEM messages will be displayed every time a user logs in, rather
+than just once.  Non-SYSTEM message will also be  displayed  every  time
+(in  whatever  mode  is selected, i.e. BRIEF, SHOWNEW, or READNEW) until
+the user actually reads that message (or a later one).  This feature  is
+meant  for  messages which are very important, and thus you want to make
+sure they are read.
+ 
+  Format:
+ 
+    SET [NO]ALWAYS
+2 BBOARD
+Specifies  a username to be used as a BBOARD destination.  Mail which is
+sent to that user are converted into messages.  This command will  apply
+to  the  selected folder, and each folder can have its own BBOARD.  Only
+privileged users or owners of the folders can  set  BBOARD.   Note:  The
+specified  account  must  have  the DISUSER flag specified in the system
+authorization file, and it either must be given  SYSPRV  privileges,  or
+the  scratch  bboard_directory  (specified when compiling BULLETIN) must
+have world rwed  protection.   Also,  certain  system  parameters  which
+affect  detached  subprocesses  are  usually  too low for the subprocess
+which is spawned to read the mail.  The  parameters  and  the  suggested
+values  are:  PQL_DPGFLQUOTA = 10000, PQL_DWSQUOTA = 500, and PQL_DFILLM
+= 30.  If you are not using the BULLCP process, the subprocess limit for
+users must be at least 2.
+ 
+  Format:
+ 
+    SET BBOARD [username]
+ 
+BBOARD cannot be set for remote folders.   See  also  the  commands  SET
+STRIP and SET DIGEST for options on formatting BBOARD messages.
+ 
+If BULLCP is running, BBOARD is updated every 15 minutes.  If you want
+to length this period, define BULL_BBOARD_UPDATE to be the number of
+minutes, between updates.  I.e. DEFINE/SYSTEM BULL_BBOARD_UPDATE "30"
+will cause the updates to be don every 30 minutes.
+ 
+NOTE: If you want to control the expiration date on a per message basis,
+you can do so by adding a special header line to the message.  The form
+is Expires: or X-Expires: followed by the date in the form DD MMM YYYY.
+The time will always be 00:00, even if the time is specified on the line.
+3 /EXPIRATION
+ /EXPIRATION=days
+ /NOEXPIRATION
+ 
+Specifies the number of days the message created by the BBOARD is to  be
+retained.   The  default  is  14  days.   The  highest limit that can be
+specified is 30 days.  This can be overridden by a user with privileges.
+If /NOEXPIRATION is specified, messages will become permanent.
+ 
+NOTE:  This  value is the same value as specified by SET DEFAULT_EXPIRE.
+If one is changed, the other will change also.
+3 /SPECIAL
+Specifies that the input should be processed  using  a  special  command
+procedure,  and  not  to  use the simple VMS MAIL to message conversion.
+Specifying a username is optional.  To remove  this  feature,  you  must
+either  SET  NOBBOARD,  or  SET  BBOARD  and  specify  a  username.  See
+installation notes for exactly how to use this feature.
+3 /VMSMAIL
+Used in conjunction with  /SPECIAL.   If  /SPECIAL  and  a  username  is
+specified,  and the conversion still takes its input from VMS MAIL, then
+the VMS system mail file is checked to see if new mail  exists  for  the
+specified  user  before  running the command procedure.  This saves time
+and avoids creating subprocesses.  (Useful if input is digest format.)
+3 Listserv
+For a LISTSERV mailing list, only a subscribed user can post to it.   If
+the  BBOARD  account  is subscribed to the list in order for BULLETIN to
+receive the list, only the BBOARD account will be able to  post  to  it.
+This  problem  is  solved  by  placing  the  word LISTSERV in the folder
+description line. Then, messages sent to the mailing list  by  the  POST
+command will be sent from the BBOARD account rather than from the user's
+account.  For example, the folder description might be:
+ 
+FAKE MAILING LIST <FAKELIST@FAKENODE.BITNET> LISTSERV.
+ 
+If  you  have  PMDF  or  MX  installed,  the  corresponding logical name
+PMDF_REPLY_TO or MX_REPLY_TO will be temporarily defined in order to add
+a  REPLY-TO:   line  to  the  message  header to display the real user's
+address.
+ 
+Users  who  use the method described in HELP SET BBOARD MORE_INFORMATION
+should note the following:  When using this LISTSERV feature, the BBOARD
+account  must be a real account, not simply a VMS MAIL forwarding entry.
+Mail can only be sent from a real account.  However, if mail  forwarding
+is  set for that the account, the account does not need a real directory
+or a unique uic, since it will not need space to store mail.
+ 
+In order to be able to send LISTSERV commands from  the  BBOARD  account
+without  having  to  actually  login  to  the BBOARD account, there is a
+utility included with BULLETIN called SETUSER.  This requires privileges
+to use.  After compiling it, use the link command:
+ 
+	LINK SETUSER,SYS$SYSTEM:SYS.STB/SELECT
+ 
+When  you  run  it, it will prompt for a username.  After verifying that
+the given username  is  a  valid  account,  it  will  then  change  your
+process's username.  You can then send mail from that account.
+ 
+If you are using PMDF or MX, and wish to use this feature, you can still
+do  so  by  setting BBOARD.  As long as the BBOARD account is not a real
+account, it will work properly, even though the mail feed is not  really
+coming from the BBOARD account.
+ 
+In order to find out if the LISTSERV mailing list will accept posts only
+from subscribed users, send  the  command  'REV  listname'.   This  will
+retrieve the file listname.LIST.  It begins with a list of keywords.  If
+the keyword 'send' is set  to  'public',  you  don't  need  to  set  the
+LISTSERV  switch.   If it's set to 'private', you do.  For a description
+of the keywords and the meaning of their settings, send any LISTSERV the
+command  'INFO  KEY'. Note that the 'listname.LIST' files include a list
+of owners and subscribers.  If 'send' is set to 'owners',  then  neither
+the public nor the subscribers can post to the list.
+ 
+3 More_information
+If more than one folder is to have a BBOARD setting,  only  one  of  the
+BBOARD  names  need  be  a real account.  All other names could be names
+whose mail is  forwarded  to  the  real  account.   BULLETIN  will  then
+determine  from  the mail header which folder the mail is to be sent to.
+Forwarding can be enabled for any name within MAIL by the command:
+ 
+    MAIL> SET FORWARD/USER=from_name to_name
+ 
+Any  mail  sent  to  FROM_NAME will be forwarded to TO_NAME.  Thus, only
+TO_NAME need be a real account.  For example, if you  have  INFOVAX  and
+LASER-LOVERS  folders,  you need create only a INFOVAX account, and then
+forward LASER-LOVERS mail to INFOVAX within mail using the  command  SET
+FORWARD/USER=LASER-LOVERS  INFOVAX.   You  would  then  do  a SET BBOARD
+INFOVAX for the INFOVAX folder, and  SET  BBOARD  LASER-LOVERS  for  the
+LASER-LOVERS  folder.   This method will speed up the BBOARD conversion,
+since mail need be read only from one account.  NOTE: Folders that  have
+the  /SPECIAL  set  on  their  BBOARD  accounts  cannot  have their mail
+forwarded to BBOARD accounts that don't have /SPECIAL set.   Folders  of
+the  same  type, i.e. that use the same /SPECIAL command procedure, must
+be grouped separately.
+ 
+The BBOARD account must match the mailing list name.  If you prefer  not
+to  have  them  match,  then  you must include the actual address of the
+mailing list in the folder description in  the  format  described  under
+HELP CREATE /DESCRIPTION.
+2 BRIEF
+Controls whether you will be alerted upon logging  that  there  are  new
+messages  in the currently selected folder.  A new message is defined as
+one that has been created since the last time you logged in or  accessed
+BULLETIN.   Note  the  difference between BRIEF and READNEW.  The latter
+causes a listing of the description of the new messages to be  displayed
+and  prompts  the user to read the messages.  Setting BRIEF will clear a
+READNEW setting (and visa versa).
+ 
+  Format:
+ 
+    SET [NO]BRIEF
+3 /ALL
+Specifies that the SET [NO]BRIEF option is the default for all users for
+the specified folder.  This is a privileged qualifier.
+3 /DEFAULT
+Specifies that the [NO]BRIEF option is the default for the specified
+folder.  This is a privileged qualifier.  It will only affect brand new
+users (or those that have never logged in).  Use /ALL to modify all users.
+3 /FOLDER
+   /FOLDER=foldername
+ 
+Specifies the folder for which the option is to modified.  If not
+specified, the selected folder is modified. Valid only with NOBRIEF.
+3 /PERMANENT
+   /[NO]PERMANENT
+ 
+Specifies that BRIEF is a permanent flag and cannot be changed by the
+individual, except if changing to SHOWNEW or READNEW.  This is a
+privileged qualifier.
+2 CONTINUOUS_BRIEF
+Specifies that if BRIEF is set for a folder, and there are new messages,
+the notification message "there are new messages" will be displayed every
+time when logging in, until the new messages are read.  Normally, the
+BRIEF setting causes notification only at the first time that new messages
+are detected.
+ 
+  Format:
+ 
+    SET [NO]CONTINUOUS_BRIEF
+ 
+NOTE: Both SET GENERIC and SET CONTINUOUS_BRIEF cannot be set for the
+same user.
+2 DEFAULT_EXPIRE
+Specifies  the  number  of days the message created by BBOARD (or direct
+PMDF path) is to be retained.  The default  is  14  days.   The  highest
+limit  that  can  be  specified is 30 days.  This can be overridden by a
+user with privileges.
+ 
+This  also  specifies the default expiration date when adding a message.
+If no expiration date is  entered  when  prompted  for  a  date,  or  if
+prompting  has been disabled via SET NOPROMPT_EXPIRE, this value will be
+used.
+ 
+  Format:
+ 
+    SET DEFAULT_EXPIRE days
+ 
+If -1 is specified, messages will become permanent.  If 0 is  specified,
+no  default expiration date will be present.  The latter should never be
+specified for a  folder  with  a  BBOARD,  or  else  the  messages  will
+disappear.
+ 
+NOTE: This value is the same value that SET BBOARD/EXPIRATION specifies.
+If one is changed, the other will change also.
+2 DIGEST
+Affect  only  messages  which are added via either the BBOARD option, or
+written directly from a network mailing program  (i.e.  PMDF).   Several
+mailing  lists  use  digest  format  to  send  their  messages, i.e. the
+messages are concatenated into one long message.  If DIGEST is set,  the
+messages will be separated into individual BULLETIN messages.
+ 
+  Format:
+ 
+    SET [NO]DIGEST
+ 
+The command SHOW FOLDER/FULL will show if DIGEST has been set.
+ 
+2 DUMP
+Specifies that messages deleted from the  selected  folder  are  written
+into  a dump (or log) file.  The name of the log file is foldername.LOG,
+and it is located in the folder directory.
+ 
+  Format:
+ 
+    SET [NO]DUMP
+ 
+The  command  SHOW  FOLDER/FULL  will show if dump has been set.  (NOTE:
+SHOW FOLDER/FULL is a privileged command.)
+2 EXPIRE_LIMIT
+Specifies expiration limit that is allowed for messages.  Non-privileged
+users cannot specify an expiration  that  exceeds  the  number  of  days
+specified.  Privileged users can exceed the limit.
+ 
+    SET [NO]EXPIRE_LIMIT [days]
+ 
+The command SHOW FOLDER/FULL will show  the  expiration  limit,  if  one
+exists.  (NOTE: SHOW FOLDER/FULL is a privileged command.) 
+2 FOLDER
+Select a folder of messages.  Identical to the SELECT command.  See help
+on that command for more information.
+ 
+  Format:
+ 
+    SET FOLDER [node-name::][folder-name]
+3 /MARKED
+Selects messages that have been marked (indicated by an asterisk).
+After using /MARKED, in order to see all messages, the folder will have
+to be reselected.
+2 GENERIC
+Specifies  that  the  given  account is a "generic" account, i.e used by
+many different people.  If an  account  is  specified  as  GENERIC,  new
+messages  placed in the GENERAL folder will be displayed upon logging in
+for a specific number of days,  rather  than  only  once.   The  default
+period is 7 days.  This command is a privileged command.
+ 
+  Format:
+ 
+    SET [NO]GENERIC username
+ 
+NOTE: Both SET GENERIC and SET CONTINUOUS_BRIEF cannot be set for the
+same user.
+3 /DAYS
+ /DAYS=number_of_days
+ 
+Specifies the number days that new GENERAL messages will be displayed
+for upon logging in.
+2 KEYPAD
+Controls whether the keypad has been enabled such that the keys  on  the
+keypad correspond to command definitions.  These definitions can be seen
+via the SHOW KEYPAD command.  The default is NOKEYPAD unless the /KEYPAD
+qualifier has been added to the BULLETIN command line.
+ 
+  Format:
+ 
+    SET [NO]KEYPAD
+2 LOGIN
+Controls  whether  the  specified  user will be alerted of any messages,
+whether system or non-system, upon logging in.  If an  account  has  the
+DISMAIL  flag  set, SET NOLOGIN is automatically applied to that account
+during the first time that the account logs in.  However, this will  not
+occur  if DISMAIL is set for an old account.  Additionally, removing the
+DISMAIL flag will not automatically enable LOGIN.  (The reason  for  the
+above  was to avoid extra overhead for constant checking for the DISMAIL
+flag.)  This command is a privileged command.
+ 
+  Format:
+ 
+    SET [NO]LOGIN username
+2 NODE
+Modifies the selected folder from a local folder to a remote folder.   A
+remote folder is a folder in which the messages are actually stored on a
+folder at a remote DECNET node.  The SET NODE command specifies the name
+of  the  remote  node, and optionally the name of the remote folder.  If
+the remote folder name is not included, it is assumed to be the same  as
+the  local  folder.   When  the command is executed, the selected folder
+will then point to the remote folder.  If there  were  messages  in  the
+local folder, they will be deleted.  This feature is present only if the
+BULLCP process is running on the remote node.
+ 
+  Format:
+    SET NODE nodename [remotename]
+    SET NONODE
+ 
+NOTE: If one node adds a message to a remote node, other nodes connected
+to the same folder will not immediately be aware  of  the  new  message.
+This  info  is  updated  every  15  minutes,  or if a user accesses that
+folder.
+3 /FOLDER
+   /FOLDER=foldername
+ 
+Specifies the folder for which the node information is to modified.
+If not specified, the selected folder is modified.
+2 NOTIFY
+Specifies whether you will be notified via a broadcast  message  when  a
+message is added to the selected folder.
+ 
+  Format:
+ 
+    SET [NO]NOTIFY
+ 
+In a cluster, if the logical name MAIL$SYSTEM_FLAGS is defined so that
+bit 1 is set, users will be notified no matter which node they are logged
+in to.  If you wish to disable this, you should define BULL_SYSTEM_FLAGS
+so that bit 1 is cleared.
+3 /ALL
+Specifies that the SET [NO]NOTIFY option is the default for all users for
+the specified folder.  This is a privileged qualifier.
+3 /DEFAULT
+Specifies that the [NO]NOTIFY option is the default for the specified
+folder.  This is a privileged qualifier.  It will only affect brand new
+users (or those that have never logged in).  Use /ALL to modify all users.
+3 /FOLDER
+   /FOLDER=foldername
+ 
+Specifies the folder for which the option is to modified.  If not
+specified, the selected folder is modified. Valid only with NONOTIFY.
+3 /PERMANENT
+   /[NO]PERMANENT
+ 
+Specifies that NOTIFY is a permanent flag and cannot be changed by the
+individual. /DEFAULT must be specified. This is a privileged qualifier.
+2 PAGE
+Specifies whether any directory listing or message reading  output  will
+pause  when  it  reaches  the end of the page or not.  Setting NOPAGE is
+useful for terminals that can store more than one screenful at  a  time,
+and  that  have a remote printer that can then print the contents of the
+terminal's memory.  The default is PAGE, unless the default was  changed
+by specifying /NOPAGE on the command line to invoke BULLETIN.
+ 
+  Format:
+ 
+    SET [NO]PAGE
+2 PRIVILEGES
+Specifies  either  process  privileges  or  rights  identifiers that are
+necessary to use privileged commands.  Use the SHOW  PRIVILEGES  command
+to see what is presently set.  This is a privileged command.
+ 
+  Format:
+ 
+    SET PRIVILEGES parameters
+ 
+The parameters are one or  more  privileges  separated  by  commas.   To
+remove  a privilege, specify the privilege preceeded by "NO".  If /ID is
+specified, the parameters are rights identifiers.
+3 /ID
+ /[NO]ID
+ 
+If specified, then the rights identifier which is specified as the
+parameter will allow users holding that rights identifier to execute
+privileged commands.  If /NOID is specified, the identifier is removed.
+2 PROMPT_EXPIRE
+Specifies  that  a  user  will  be  prompted for an expiration date when
+adding a message.  If NOPROMPT_EXPIRE is specified, the user will not be
+prompted, and the default expiration (which is set by SET DEFAULT_EXPIRE
+or SET BBOARD/EXPIRATION) will be  used.   If  the  value  specified  is
+greater   than  the  expiration  limit,  and  the  user  does  not  have
+privileges, then the expiration  limit  will  be  used  as  the  default
+expiration.  (If there is no expiration limit, and the user doesn't have
+privileges, then an error will result.)  PROMPT_EXPIRE is the default.
+ 
+  Format:
+ 
+    SET  [NO]PROMPT_EXPIRE
+2 READNEW
+Controls whether you will be prompted upon logging in  if  you  wish  to
+read new non-system or folder messages (if any exist).  A new message is
+defined as one that has been  added  since  the  last  login,  or  since
+accessing BULLETIN.  The default setting for READNEW is dependent on how
+the folder was created by the owner.
+ 
+In  order  to  apply  this to a specific folder, first select the folder
+(using the SELECT command), and then enter the SET READNEW command.
+ 
+  Format:
+ 
+    SET [NO]READNEW
+ 
+NOTE:  If  you  have several folders with READNEW enabled, each folder's
+messages will be displayed separately.  However, if you EXIT the READNEW
+mode before all the folders have been displayed, you will not be alerted
+of the new messages in the undisplayed folders the next time you  login.
+However,  if  you enter BULLETIN, you will be told that new messages are
+present in those other folders.  Also, it is not possible  to  EXIT  the
+READNEW mode if there are SYSTEM folders which have new messages. Typing
+the EXIT command will cause you to skip to those folders.  (See HELP SET
+SYSTEM for a description of a SYSTEM folder).
+3 /ALL
+Specifies that the SET [NO]READNEW option is the default for all users for
+the specified folder.  This is a privileged qualifier.  The difference
+between this and /DEFAULT is that the latter will only apply to new users
+(i.e. any users which have never executed BULLETIN).
+3 /DEFAULT
+Specifies that the [NO]READNEW option is the default for the specified
+folder.  This is a privileged qualifier.  It will only affect brand new
+users (or those that have never logged in).  Use /ALL to modify all users.
+3 /FOLDER
+   /FOLDER=foldername
+ 
+Specifies the folder for which the option is to modified.  If not
+specified, the selected folder is modified. Valid only with NOREADNEW.
+3 /PERMANENT
+   /[NO]PERMANENT
+ 
+Specifies that READNEW is a permanent flag and cannot be changed by the
+individual.  This is a privileged qualifier.
+2 SHOWNEW
+Controls whether a directory listing of new  messages  for  the  current
+folder  will  be displayed when logging in.  This is similar to READNEW,
+except you will not be prompted to read the messages.   The  default  is
+dependent  on how the folder was created by the owner.  A new message is
+defined as one that has been  added  since  the  last  login,  or  since
+accessing BULLETIN.
+ 
+In order to apply this to a specific folder,  first  select  the  folder
+(using  the  SELECT  command),  and  then enter the SET SHOWNEW command.
+ 
+  Format:
+ 
+    SET [NO]SHOWNEW
+3 /ALL
+Specifies that the SET [NO]SHOWNEW option is the default for all users for
+the specified folder.  This is a privileged qualifier.  The difference
+between this and /DEFAULT is that the latter will only apply to new users
+(i.e. any users which have never executed BULLETIN).
+3 /DEFAULT
+Specifies that the [NO]SHOWNEW option is the default for the specified
+folder.  This is a privileged qualifier.  It will only affect brand new
+users (or those that have never logged in).  Use /ALL to modify all users.
+3 /FOLDER
+   /FOLDER=foldername
+ 
+Specifies the folder for which the option is to modified.  If not
+specified, the selected folder is modified. Valid only with NOSHOWNEW.
+3 /PERMANENT
+   /[NO]PERMANENT
+ 
+Specifies that SHOWNEW is a permanent flag and cannot be changed by the
+individual, except if changing to READNEW. This is a privileged qualifier.
+2 STRIP
+Affect only messages which are added via either the BBOARD option, or
+written directly from a network mailing program (i.e. PMDF).  If
+STRIP is set, the header of the mail message will be stripped off
+before it is stored as a BULLETIN message.
+ 
+  Format:
+ 
+    SET [NO]STRIP
+ 
+The command SHOW FOLDER/FULL will show if STRIP has been set.
+2 SYSTEM
+Specifies that the selected folder is a SYSTEM folder.  A SYSTEM folder
+is allowed to have SYSTEM and SHUTDOWN messages added to it.  This is a
+privileged command.
+ 
+  Format:
+ 
+    SET [NO]SYSTEM
+ 
+By default, the GENERAL folder is a SYSTEM folder, and the setting for
+that folder cannot be removed.
+ 
+If the selected folder is remote, /SYSTEM cannot be specified unless the
+folder at the other node is also a SYSTEM folder.
+1 SHOW
+The SHOW command displays information about certain characteristics.
+2 FLAGS
+Shows whether BRIEF, NOTIFY, READNEW, or SHOWNEW has been set for the
+currently selected folder.
+2 FOLDER
+Shows information about a folder of messages.  Owner and description are
+shown.  If the folder name is omitted, and a folder has been selected via
+the SELECT command, information about that folder is shown.
+ 
+  Format:
+ 
+    SHOW FOLDER [folder-name]
+3 /FULL
+Control whether all information of the folder is displayed.  This
+includes DUMP & SYSTEM settings, the access list if the folder is
+private, and BBOARD information.  This information is only those who
+have access to that folder.
+2 KEYPAD
+Displays the keypad command definitions.  If the keypad has been enabled
+by either the SET KEYPAD COMMAND, or /KEYPAD is specified on the command 
+line, the keypad keys will be defined as commands.  SHOW KEYPAD is the
+equivalent of HELP KEYPAD.
+ 
+NOTE: If the keypad is not enabled, PF2 is defined to be SET KEYPAD.
+3 /PRINT
+Prints the keypad definitions on the default printer (SYS$PRINT).
+2 NEW
+Shows folders which have new unread messages for which BRIEF or READNEW
+have been set.  (Note: If you enter BULLETIN but do not read new unread
+messages, you will not be notified about them the next time you enter
+BULLETIN.  This is a design "feature" and cannot easily be changed.)
+2 PRIVILEGES
+Shows the privileges necessary to use privileged commands.  Also shows
+any rights identifiers that would also give a user privileges.  (The
+latter are ACLs which are set on the BULLUSER.DAT file.)
+2 USER
+Shows the last time that a user logged in, or if /FOLDER  is  specified,
+the  latest  message which a user has read in the folder.  If NOLOGIN is
+set for  a  user,  this  information  will  be  displayed.   This  is  a
+privileged  command.   Non-privileged users will only be able to display
+the information for their own account.
+ 
+  Format:
+    SHOW USER [username]
+ 
+The username is optional.  If omitted, the process's username  is  used.
+The  username should not be included if /ALL or /[NO]LOGIN is specified.
+ 
+NOTE: The last logged in time displayed is that which is stored when the
+BULLETIN/LOGIN command is executed, not that  which  VMS  stores.   Some
+sites  make  BULLETIN/LOGIN  an  optional  command for users to store in
+their own LOGIN.COM, so this command can be used  to  show  which  users
+have done this.
+3 /ALL
+Specifies that information for all users is to be displayed.  This is  a
+privileged command.
+3 /LOGIN
+ /[NO]LOGIN
+ 
+Specifies that only those users which do not have NOLOGIN set are to be
+displayed.  If negated, only those users with NOLOGIN set are displayed.
+This is a privileged command.  The qualifier /ALL need not be specified.
+3 /FOLDER
+   /FOLDER=[foldername]
+ 
+Specifies to display the latest message that was read by the user(s) for
+the  specified  foldername.   A newsgroup can be specified, but the info
+can only be shown if the user has subscribed to the newsgroup.   If  the
+foldername is not specified, the selected folder will be used.
+3 /SINCE
+   /SINCE=[date]
+ 
+Specifies  to display only those users whose latest read message date is
+the same date  or  later  than  the  specified  date.   If  no  date  is
+specified,  the  date  of  the  current message is used.  Only valid for
+folders or with /LOGIN.  Use /START for newsgroups.
+3 /START
+   /START=[number]
+ 
+Specifies  to  display only those users whose latest read message number
+is equal to or greather than the specified  number.   If  no  number  is
+specified,  the  message  number  of  the current message is used.  Only
+valid for newsgroups.  Use /SINCE for folders and with /LOGIN.
+2 VERSION
+Shows  the  version  of  BULLETIN  and  the date that the executable was
+linked.
+1 SPAWN
+Creates  a  subprocess  of  the current process.  To return to BULLETIN,
+type LOGOUT.
+ 
+  Format:
+    SPAWN [command-string]
+ 
+NOTE: BULLETIN disables the use of  CONTROL-C,  so  that  you  must  use
+CONTROL-Y if you wish to break out of a spawned command.
+1 SUBSCRIBE
+Used only for NEWS folders.  Specifies that BULLETIN will keep track  of
+the  newest  message  that has been read for that NEWS folder.  When the
+NEWS folder is selected, the message pointer will automatically point to
+the next newest message that has not been read.
+1 UNDELETE
+Undeletes  he  specified  message  if  the message was deleted using the
+DELETE command.  Deleted messages are  not  actually  deleted  but  have
+their  expiration  date  set to 15 minutes in the future and are deleted
+then.  Undeleting the message will reset the expiration date back to its
+original  value.   Deleted  messages  will  be  indicated as such by the
+string (DELETED) when either reading or doing a directory listing.
+ 
+  Format:
+    UNDELETE [message-number]
+1 UNSUBSCRIBE
+Used only for NEWS folders.  Specifies that BULLETIN will no longer keep
+track of the newest message that has been read for that NEWS folder.  See the
+SUBSCRIBE command for further info. 
