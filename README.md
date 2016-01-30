@@ -95,6 +95,13 @@ for f in **/*.zip; do
 done
 ```
 
+### .com files
+
+So it might be possible to run DCL on Linux.  A rather
+[exhaustive list](http://jonesrh.info/dcll/dcll_why_i_use.html)
+of the options seems to indicate that
+[PC-DCL](http://users.skynet.be/michel.valentin/) might be an option.
+
 ### General cleanup
 
   * Removed exe and obj files: `git rm **/*.{exe,obj}`
