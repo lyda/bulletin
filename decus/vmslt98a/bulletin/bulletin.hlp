@@ -1,0 +1,151 @@
+1 BULLETIN
+Invokes  the  PFC  BULLETIN  Utility.  This utility is used for reading,
+adding and deleting message.  Users are notified at login time that new
+messages have been added and the topics of those messages are displayed.
+Reading of those messages is optional.  (Use  the  command  SET  READNEW
+while  in BULLETIN for setting automatic reading.)  Privileged users can
+add system bulletins that are displayed in full at  login  time.   These
+messages  are  also  saved,  and  can be read by BULLETIN.  Messages are
+automatically deleted after a specified expiration  date,  or  they  can
+manually  be  deleted  by  either  the  submitter  of  the  message or a
+privileged user.
+
+ Format:
+
+      BULLETIN [foldername or bulletin interactive command]
+
+BULLETIN has an interactive help  available  while  using  the  utility.
+Type HELP after invoking the BULLETIN command.
+
+If so configured, BULLETIN can also read USENET NEWS.
+2 Description
+
+The  BULLETIN  utility  is  a  utility to display messages to users when
+logging in.  Users are notified of  messages  only  once.   They're  not
+forced into reading them every time they log in.  Submitting and reading
+messages is easy to do via a utility similar to the  VMS  MAIL  utility.
+Privileged users can create messages which are displayed in full. (known
+as SYSTEM  messages).   Non-privileged  users  may  be  able  to  create
+non-SYSTEM  messages  (unless  your  system  manager  has  disabled  the
+feature), but only topics are displayed at login.
+
+Folders can be created so that messages pertaining to a single topic can
+be  placed  together.   Folders  can be made private so that reading and
+writing is limited to only users  or  groups  who  are  granted  access.
+Alternatively,  folders  can  be  made  semi-private in that everyone is
+allowed to read them but write access is limited.
+
+When new non-system messages are displayed, an optional feature which  a
+user  may  enable  will cause BULLETIN to ask whether the user wishes to
+read the new bulletins. The user can then read the  messages  (with  the
+ability  to  write any of the messages to a file). A user can enable the
+notification and prompting of new  messages  feature  on  a  folder  per
+folder  basis.   However,  the  exception  is  messages submitted to the
+default GENERAL folder.  Users are  always  notified  at  login  of  new
+bulletins  in  this  folder,  but can disable the prompting.  This is to
+give non-privileged users some ability to force  a  notification  of  an
+important message.
+
+Messages have expiration dates and times, and are deleted automatically.
+Expiration dates and  times  can  be  specified  in  absolute  or  delta
+notation.   Privileged  users  can  specify  "SHUTDOWN"  messages,  i.e.
+messages  that  get  deleted  after  a  system  shutdown  has  occurred.
+"PERMANENT" messages can also be created which never expire.
+
+Privileged users can broadcast their message (to either all users or all
+terminals).
+
+A user can select, on a folder per  folder  basis,  to  have  a  message
+broadcast  to  their  terminal  immediately  notifying  them  when a new
+message has been added.
+
+An optional "Bulletin Board" feature allows messages to  be  created  by
+users  of  other  systems  connected  via  networks.   A username can be
+assigned to a folder, and any mail sent to that  user  is  converted  to
+messages  and  stored  in  that  folder.   This  feature  originally was
+designed to duplicate the message board  feature  that  exists  on  some
+Arpanet  sites.  However, with the addition of folders, another possible
+use is to assign an Arpanet mailing list to a folder. For  example,  one
+could  have  an  INFOVAX folder associated with an INFOVAX username, and
+have INFO-VAX mail sent to INFOVAX.  Users could then read  the  mailing
+list  in  that  folder,  rather  than having INFO-VAX sent to each user.
+Optionally, the input for the bulletin board can be directed to be taken
+from  any  source other than VMS MAIL.  This might be useful if incoming
+mail is stored in a different place other than VMS MAIL.
+
+Messages can be either sent to a file, to a print queue,  or  mailed  to
+another user.
+
+BULLETIN  can  also  act a USENET NEWS reader if the appropriate network
+software is available to interact with.  See the installation notes  for
+more detail.
+2 Parameters
+The  parameter  following  the  BULLETIN  command  is interpreted as the
+folder name which should be selected, rather than  the  default  GENERAL
+folder.   If  the  parameter is specified with quotes ("parameter"), the
+parameter is  interpreted  as  an  interactive  BULLETIN  command,  i.e.
+commands  which are entered once BULLETIN is executed, i.e. "DIRECTORY",
+"ADD", etc.  BULLETIN will exit immediately after entering that command,
+rather than prompting for another command.  More than one command can be
+specified by separating the  commands  with  semi-colons,  i.e.  "SELECT
+DATA;DIR".  If the last command ends with a semi-colon, then BULLETIN 
+will not exit, but instead will enter the standard interactive mode and
+prompt the user for commands.
+2 /EDIT
+Specifies that all ADD or REPLACE commands within BULLETIN will select
+the editor for inputting text.
+2 /KEYPAD
+ /[NO]KEYPAD
+Specifies that keypad mode is to be set on, such that the keypad keys
+correspond to BULLETIN commands.  The default is /KEYPAD.
+2 /LIBRARY
+ /LIBRARY=library
+
+Specifies the library of folders to use.  By default there is  only  one
+library.  However, the system manager may decide to create more than one
+library, with each library saved in a different directory.  Use the SHOW
+LIBRARY/ALL command within BULLETIN to see if there are other libraries. 
+2 /PAGE
+ /[NO]PAGE
+
+Specifies  whether BULLETIN will stop outputting when it displays a full
+screen or not.  /PAGE is the default.   If  /NOPAGE  is  specified,  any
+output  will  continue  until it finishes.  This is useful if you have a
+terminal which can store several screenfuls of display in its memory.
+2 /PGFLQUOTA
+   /PGFLQUOTA=pages
+
+Used if you want to specify the page file quota for the BULLCP process.
+2 /STARTUP
+Starts up a detached process which will periodically check for expired
+messages, cleanup empty space in files, and convert BBOARD mail to
+messages.  This is recommended to avoid delays when invoking BULLETIN.
+It will create a process with the name BULLCP.  For clusters, this
+need be done only on one node.  On all other nodes, the system logical
+name BULL_BULLCP should be defined (to anything) in order that BULLETIN
+is aware that it is running on another node. (On the local node where
+BULLCP is running, this logical name is automatically defined.)
+2 /STOP
+Stops the BULLCP process without restarting a new one.  (See /STARTUP
+for information on the BULLCP process.)
+2 /SYSTEM
+   /SYSTEM=[days]
+
+Displays system messages that have been recently added.  The default is
+to show the messages that were added during the last 7 days.  This can
+be modified by specifying the number of days as the parameter.
+This command is useful for easily redisplaying system messages that
+might have been missed upon logging in (or were broadcasted but were
+erased from the screen.)
+2 /WIDTH
+   /WIDTH=page_width
+
+Specifies the terminal width for display purposes.  This is used if your
+startup procedure is configured such that BULLETIN/LOGIN is executed before
+the terminal type is known, and the default width is larger than what the
+terminal type actually is.  I.e. the default width might be 132, but the
+real width is 80.  In that case, you should add /WIDTH=80 to BULLETIN/LOGIN.
+2 /WSEXTENT
+   /WSEXTENT=pages
+
+Used if you want to specify the working set limit for the BULLCP process.

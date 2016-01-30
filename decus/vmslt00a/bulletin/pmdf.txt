@@ -1,0 +1,29 @@
+To allow PMDF to be able to transfer mail to BULLETIN folders, edit the file
+PMDF_TABLE:PMDF.CNF, and append the following 5 lines to the rewrite section
+(make sure you do not include any lines with spaces in that section.  Replace
+the string "urdomain", with your domain (i.e., my domain is PSFC.MIT.EDU).
+
+!
+! Rewrites for bulletin channel
+!
+BULLETIN             $U%BULLETIN@BULLETIN-DAEMON
+BULLETIN.urdomain    $U%BULLETIN@BULLETIN-DAEMON
+
+Then, add the following 5 lines to the channel section (or just put it at the
+end of that file).                    
+
+!
+! The BULLETIN Channel rule
+!
+bull_local single master slave_debug master_debug logging defragment charset7 us-ascii charset8 iso-8859-1
+BULLETIN-DAEMON
+
+After you do this, you can now link and install the BULLETIN executable using
+PMDF.COM  Once you do that, if you want email messages to be automatically
+transferred to a BULLETIN folder, you will need to add an alias to
+PMDF_TABLE:PMDF.CNF  For example, if you email sent to TEST to be placed in
+the TEST folder, you would add the line:
+
+test: test@bulletin  
+
+Note that folder names do not necessarily have to match account names.

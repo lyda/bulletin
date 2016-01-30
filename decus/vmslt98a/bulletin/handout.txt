@@ -1,0 +1,268 @@
+               Introduction to BULLETIN on the Vax
+                                                  2/88 AW
+
+PUBLISHED BY THE DREW UNIVERSITY ACADEMIC COMPUTER CENTER. MAY BE
+COPIED WITH WRITING CREDIT GIVEN TO DREW UNIVERSITY.
+
+BULLETIN was written for the Public Domain by Mark London at MIT.
+
+     The BULLETIN utility permits a user to create messages for
+reading by other users.  Users may be notified upon logging on
+that new messages have been added, and what the topic of the
+messages are.  Actual reading of the messages is optional.  (See
+the command SET READNEW for info on automatic reading.)  Messages
+are automatically deleted when their expiration data has passed.
+     The program runs like VAX mail.  The different interest
+groups or BULLETIN boards are implemented in the form of
+'Folders', just like a filing cabinet.  A Folder contain various
+messages on the same general topic.  A message is a piece of text
+written by a user or staff person and added to a particular
+folder.  All users are not permitted to submit messages to all
+folders.
+
+     A message consists of an expiration date, a subject line
+and the text of the message.  BULLETIN will prompt the user for
+these things when a message is being added.
+
+     Several different folders are currently defined to
+BULLETIN.  The General Folders will be used by Computer Center
+Staff to post messages of general interest concerning the VAX to
+the user community.  If something is of an important nature, it
+will be posted in the General folder as a 'System' message.
+This is a special message type.  It will be displayed to each
+user  as they log in the first time after that message was
+posted.  This will be done automatically by BULLETIN on login.
+Once a particular system message has been displayed, it will not
+be displayed for that user on subsequent logins.
+
+Folders
+
+     Different folders have been created to contain messages on
+different topics.  Folders may be public, semi-private, or
+private.  The majority of the folders will be public.  However a
+few will be semi-private, which will mean that all users may
+read messages in the folder but not all will be able to post to
+it.  Currently, there are several folders defined:
+
+GENERAL -- system messages
+
+PUBLIC_ANNOUNCEMENTS -- Can be used by anyone to post messages
+of interest to the public
+
+On Beta:
+AIDE STATION -- Private folder for Computer Center Employees
+
+In addition on Alpha there are folders that receive electronic
+magazines, such as:
+NETMONTH --  The monthly magazine of BITNET information.
+RISKS -- Identifying the risks involved in using computers.
+INFOIBMPC -- Information about the IBM personal computers.
+INFOVAX -- Information on the Digital VAX.
+PROGRAMMING_JOURNALS-Includes MINIX, UNIX and C, Modula-2 and
+Prolog journals
+watch for new ones being added.
+
+Using BULLETIN
+
+     BULLETIN is invoked by type the command 'BULLETIN' (or BULL,
+for short) at the '$' prompt.  BULLETIN will display its prompt
+'BULLETIN>'. Help is available from DCL command level ($) or from
+within the BULLETIN program itself by typing the word 'HELP'.  To
+leave the BULLETIN program, type 'EXIT'.
+
+To see what is there
+
+     In order to see message and folders, on can use the
+'Directory' command. Upon entering BULLETIN, the user is place
+in the General folder.  If the user wishes to see which folders
+exist, the directory/folders command is used. for example:
+typing:
+
+     BULLETIN> directory/folders
+
+will make a display like:
+
+      Folder                       Owner
+     *GENERAL                      SYSTEM
+     *PUBLIC_ANNOUNCEMENTS         BBEYER
+      NETMONTH                     BITNET
+     *VAX_SIG                      BBEYER
+
+An asterisk (*) next to the folder name indicates you have unread
+messages in that folder.
+
+The command 'DIRECTORY/FOLDERS/DESCRIBE' would list all available
+folders, along with a brief description of each.
+
+     To switch from one folder to another folder, the user may
+execute the 'SELECT' command.  For example, the following
+command would show what a user would do to switch to the folder
+called PUBLIC_ANNOUNCEMENTS:
+
+BULLETIN> SELECT PUBLIC_ANNOUNCEMENTS
+
+and BULLETIN would respond:
+     Folder has been set to PUBLIC_ANNOUNCEMENTS
+
+     Now the user may get a list of the messages in this folder
+by issuing the directory command with no qualifiers.
+This command, for example:
+BULLETIN> DIRECTORY
+would have bulletin respond:
+
+ #     Description               From                  Date
+ 1     CHRISTMAS PARTY           oleksiak              26-JUN-88
+ 2     Learning about BULLETIN   oleksiak              26-JUN-87
+ 3     VAX MAIL                  LLLOYD                01-Jan-87
+
+     The command 'DIR/NEW' will list just unread messages.
+
+
+Reading messages
+
+     In order to read messages in a folder, the user may type
+the read command or he/she may simply type the number of the
+message he wishes to read.  The message numbers can be acquired
+by doing the 'DIRECTORY' command.  If the user hits a carriage
+return with no input whatsoever,  BULLETIN will type the first
+message in the folder, or if there are new messages present, it
+will type the first new message in the folder.
+
+     If a folder contains the above messages (as seen by the
+'Directory' command) then these messages can be read by:
+
+BULLETIN> READ
+and BULLETIN would respond:
+
+Message number:  1                       PUBLIC_ANNOUNCEMENTS
+Description: CHRISTMAS PARTY
+Date:  26-JUN-1988 8:08:40   Expires:  1-JAN-1989 08:08:40
+
+...Body of message.....
+
+     Should the user only wish to see message number 3, he can
+enter the 'READ' command with the message number as a parameter.
+for example:
+
+BULLETIN> READ 3
+
+     There are three other useful commands that can be used at
+the 'BULLETIN>' prompt when reading messages. These are:
+
+BACK - Read the message preceding the message currently being
+read.
+
+CURRENT - Start reading the current message at the top.  This is
+useful for someone who is reading a message and wishes to reread
+it from the beginning.
+
+NEXT - Start reading from the beginning of the next message.
+This is handy if the user is reading a very long message and
+wants to skip to the next one.
+
+Saving the interesting stuff.
+
+     If the user sees something which he/she wants a copy of,
+the extract command can be use to write an ASCII copy of the
+message into a file.  This command works on the current message
+being read.  It requires the name of the file into which to save
+the message.  If the file name is not given, the user will be
+prompted for it.  For example:
+
+BULLETIN>  Read 2
+
+********** Message on Screen ********
+
+A person could then type
+BULLETIN> extract
+file:  FV.TXT
+BULLETIN>
+
+BULLETIN has now saved the contents of message number 2 into the
+file name 'FV.txt'.
+     If the file to which the user is writing already exists,
+BULLETIN will append the message to the file.  The user can
+force BULLETIN to write a new file containing only the message
+being saved by using the '/new' qualifier in the 'extract'
+command.  These messages can then be sent to other users, or
+downloaded for use in Wordperfect.  (See "Mail on the Vax", or
+"Transferring a file between a PC and the VAX").
+
+This command may be useful if you wish to transfer the message to
+your PC, perhaps using a BITNET journal message as a reference in
+a paper. Once the file is saved, you can transfer it to a PC by
+following the instructions in the handout 'Transferring files
+from the PC to the VAX of from the VAX to a PC".
+
+Adding messages
+     A user may add a message to a folder by selecting the
+folder and then using the 'ADD' command.  This is provided that
+the user is adding the message to a public folder.  The user has
+the option of giving the 'ADD' command and typing a message using
+the VAX editor or uploading a message from your PC (see
+documentation), or add a message you have extracted from VAX
+mail.  BULLETIN will prompt for the expiration date and subject
+line.  It will then add the text of the file as the body of the
+message. To add a message that is stored in a file (from MAIL or
+from your PC, for example) type:
+
+          ADD filename
+
+If the user does not specify a file name, he/she will be
+prompted to enter the body of the message.  The user may also
+use the EDT text editor by issuing the command with the
+'/EDIT'option.
+
+For example:
+BULLETIN> sel PUBLIC_ANNOUNCEMENTS
+          folder has been set to PUBLIC_ANNOUNCEMENTS
+BULLETIN> ADD MESS.TXT
+
+IT IS 10-JUL-1988 12:41:06.15.  SPECIFY WHEN THE MESSAGE SHOULD
+EXPIRE:  ENTER ABsolute TIME:  <DD-MMM-YYYY]HH:MM:SS OR DELTA
+TIME: DDD HH:MM:SS
+
+A user then type the date of expiration and press the 'return'
+button.  The time input may be ignored. For example, typing:
+20-JUL-1988 or type "10" - for ten days in the future.
+
+BULLETIN responds:
+ENTER DESCRIPTION HEADER.  LIMIT HEADER TO 53 CHARACTERS.
+
+Now the user may enter the subject of the message.
+
+BULLETIN>
+
+The above session adds the text in the file 'mess.txt' as the
+next message in the PUBLIC_ANNOUNCEMENTS Folder.  The message
+will be deleted automatically on the 20th of July as requested
+by the user adding the message.
+
+Asking BULLETIN to notify you of new messages upon logging in.
+
+     If the user wishes to get notification on login when new
+messages are in a folder, he should use the 'READNEW' option.
+This command does not force the reader to reading new messages,
+only gives notification.  To do this, 'SELECT' each folder you
+are interested in and do a 'SET READNEW' command while set to
+that folder.
+
+Example:
+
+BULLETIN> Select PUBLIC_ANNOUNCEMENTS
+folder has been set to PUBLIC_ANNOUNCEMENTS
+BULLETIN> SET READNEW
+
+Alternately, you may type SET SHOWNEW. This will just display a
+message notifying you that there are new messages.
+
+Mailing a BULLETIN message
+
+     A user may directly mail another user a message found in the
+BULLETIN.  While reading the message that he/she desires to send,
+at the 'BULLETIN>' type 'MAIL'.  The Vax will then ask to whom
+you wish to send the information too.
+
+Check the BULLETIN DISCUSSION folder on ALPHA for new additions.
+If you have comments or questions about BULLETIN, leave them
+there.

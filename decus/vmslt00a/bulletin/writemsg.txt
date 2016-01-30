@@ -1,0 +1,36 @@
+BULLETIN contains subroutines for writing a message directly to a folder.  This
+would be useful for someone who is using the BBOARD feature, but wants to avoid
+the extra overhead of having the message sent to an account as MAIL, and then
+have BULLCP read the mail.  It is better if the network mail could be written
+directly to the folder bypassing VMS MAIL, as it reduces a lot of cpu overhead.
+
+Call INIT_MESSAGE_ADD to initiate a message addition.
+Call WRITE_MESSAGE_LINE to write individual message lines.
+Call FINISH_MESSAGE_ADD to complete a message addition.
+
+Calling formats:
+
+	CALL INIT_MESSAGE_ADD(IN_FOLDER,IN_FROM,IN_DESCRIP,IER)
+C
+C  INPUTS:
+C	IN_FOLDER  - Character string containing folder name
+C	IN_FROM	   - Character string containing name of owner of message.
+C		     If empty, the default is the owner of the process.
+C	IN_DESCRIP - Character string containing subject of message.
+C		     If empty, the message is searched for a line
+C		     which starts with "Subj:" or "Subject:".
+C  OUTPUTS:
+C	IER - Error status.  True if properly connected to folder.
+C		False if folder not found.
+C
+
+	CALL WRITE_MESSAGE_LINE(BUFFER)
+C
+C  INPUTS:
+C	BUFFER - Character string containing line to be put into message.
+C
+
+	CALL FINISH_MESSAGE_ADD
+C
+C  NOTE:  Only should be run if INIT_MESSAGE_ADD was successful.
+C

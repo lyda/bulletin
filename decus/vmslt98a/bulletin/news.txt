@@ -1,0 +1,150 @@
+BULLETIN now has the capability to read and post messages to USENET NEWS in a
+client mode.  I realize that there are many NEWS readers, some with much more
+elegant interfaces.  However, I elected to modify BULLETIN for the following
+reason:  We have many decnet nodes, but only several are internet nodes.  Our
+only access to a news server was via internet.  In order for those
+non-internet nodes to read USENET, the only method that seemed available was to
+run a NEWS server program on one of our own internet nodes so that it could
+be accessible via decnet.  I did not want to do that, as that requires storing
+the news groups on disk, and I do not have the room for that.  I thus added the
+ability in BULLETIN (actually BULLCP) so that it acts as as a gateway between
+decnet and tcp for NEWS.  This method does not require spawning any processes,
+since the detached process BULLCP is always present, so the access is very
+fast.  Also, since BULLETIN uses a shared database to store info on the NEWS
+groups and periodically updates it, there is no need for that to be done when a
+user accesses the NEWS groups.  Several other NEWS readers do this when you run
+them, which is why they take a long time to start up.  It is also possible to
+feed NEWS groups into a "real" BULLETIN folder, so that the messages are saved
+on disk.
+
+Presently, BULLETIN can be used with either UCX, MULTINET, or CMU TCP/IP
+packages (and of course DECNET) for reading NEWS.  Support for other packages
+can be added if I can find sites willing to beta test the interface for me. 
+The source for the TCP interface is in C rather than FORTRAN because the
+MULTINET include files are in C. However, if you do not have C, I will be glad
+to send the object for it (or to even possibly rewrite the code in FORTRAN). 
+
+The instructions for installation are as follows.  Define BULL_NEWS_SERVER
+to be a system logical name pointing to either your internet or decnet NEWS
+node.  If it is decnet, simply specify the decnet node name, i.e.
+
+	$ DEFINE/SYSTEM BULL_NEWS_SERVER NERUS
+
+BULLETIN decides to use DECNET rather than TCP access based on the node name.
+If it does not have any periods in it, then it assumes it is a DECNET node.
+
+In our cluster, we usually have one node which is an internet node, and the
+rest non-internet nodes.  If you have a similar situation, you'll have to
+create a startup procedure that defines BULL_NEWS_SERVER to be the internet
+news server address only on the node (or nodes) on the cluster that have
+actually internet access.  The other nodes will have BULL_NEWS_SERVER defined
+as the decnet node name that BULLCP is running on in the cluster.  (Of course,
+BULLCP will have to be running on a node with internet access.)
+
+NOTE: If you want to disable the gateway feature, then before starting BULLCP,
+define the logical name:
+
+	$ DEFINE/SYSTEM BULL_NO_NEWS_GATEWAY "TRUE"
+
+Defining this will only shut off the gateway.  BULLETIN will still be allowed
+to read NEWS from the local node as long as BULL_NEWS_SERVER is defined.
+
+You can also specify that BULLCP is only to act as a NEWS gateway.  This is to
+allow adding the news gateway to an INTERNET site that you have DECNET access
+to, but which does not want to make use of any of the other BULLETIN features.
+You would specify the following command before starting BULLCP:
+
+	$ DEFINE/SYSTEM BULL_NEWS_GATEWAY_ONLY "TRUE"
+
+In order to post messages, BULLETIN needs to know the internet nodename of
+the local host.  This is done automatically for nodes running MULTINET.  For
+other nodes, BULLETIN attempts to translate the logical name ARPANET_HOST_NAME,
+INTERNET_HOST_NAME, and MX_NODE_NAME.  If you are on a DECNET node that is not
+on INTERNET (and is not part of a cluster which has an INTERNET address), but
+you are accessing NEWS via DECNET, you can specify the hostname as follows:
+
+     $ DEFINE/SYSTEM INTERNET_HOST_NAME "%localhost@internet-address"
+
+Where "localhost" is your local decnet hostname, and "internet-address" is the
+internet address of the gateway node.
+
+The local time zone is detected by looking at the following logical names:
+LISP$TIME_ZONE, MULTINET_TIMEZONE, or PMDF_TIMEZONE.  (LISP$TIME_ZONE is
+defined if you have LISP installed.)
+
+The name of the organization is included in the header of the NEWS message.
+This can be anything, but usually is the company or university name.  This
+can be hardcoded into the source by putting in BULLNEWS.INC, or by defining
+the system logical name BULL_NEWS_ORGANIZATION.
+
+The name of the mail protocol to use for responding by mail to NEWS messages
+can also be either hardcoded by putting in BULLNEWS.INC, or by defining the
+system logical name BULL_NEWS_MAILER.
+
+After installing the new BULLETIN, execute the command NEWS, which asks for a
+list of all the news groups.  Because this is the first time it is executed, it
+will cause a load of all the remote news groups into a local data base
+(BULL_DIR:BULLNEWS.DAT). This will take several minutes to do.  It is the only
+time that this load will be done interactively.  Afterwards, BULLCP will
+periodically update the data base.  For this reason, it is highly recommeded
+that BULLCP be installed. BULLCP will update NEWS every hour.  If you want to
+change this frequency, define the logical name BULL_NEWS_UPDATE to the number
+of minutes in between updates, i.e. DEFINE/SYSTEM BULL_NEWS_UPDATE "30" for 30
+minutes.  NOTE: BULLCP will create a subprocess BULLCP NEWS which does the
+update.  You can watch how long it takes for this to run in order to determine
+if you want to change the update period).
+
+Due to long news group names recently created, you must do the following, or
+else those news groups will not be seen.  After BULLNEWS.DAT is created, do
+the following:
+
+$ ANAL/RMS/FDL/OUT=FIX.FDL BULL_DIR:BULLNEWS.DAT
+
+Edit FIX.FDL and find the first line which says
+	DUPLICATES no
+and change it to
+	DUPLICATES yes
+
+Then type:
+
+$ CONVERT BULL_DIR:BULLNEWS.DAT BULL_DIR:BULLNEWS.DAT/FDL=FIX.FDL
+
+Also, it is suggested that you run OPTIMIZE_RMS.COM on it, as it will cause the
+file to be compressed and will allow updates to run much faster (factor of 5 or
+more). 
+
+Never delete BULLNEWS.DAT.  There is no reason to ever do so, and it will cause
+subscribed users to be subscribed to the wrong news groups.
+
+WARNING: One user discovered that his server (using bnews?) had a bug which
+caused the updates to cause bogus "new messages" notifications for subscribed
+NEWS group when entering BULLETIN.  If you experience this problem, try
+defining the system logical name BULL_SPECIAL_NEWS_UPDATE.  This will cause
+the update to use a different algorithm which should eliminate the problem,
+although it requires much more time to execute.
+
+It is possible to automatically have news messages to be fed into a real
+folder. Place the name of the news group into the folder description surrounded
+by <>, i.e. <misc.test>.  It must be in lower case.  (Other text is allowed in
+the description, i.e. "THIS IS A TEST FOLDER <misc.test>".)  When the POST and
+ADD commands are used with this folder, the messages will be posted to the news
+group, rather than actually being added to the folder.
+
+If you have any problems or questions, please let me know.
+									MRL
+P.s.
+	If you do not know what USENET NEWS, it's basically news messages which
+are passed between nodes.  Originally it was limited to USENET, but that is no
+longer the case.  Unlike internet mailing lists which use MAIL to send the
+messages to individuals, NEWS messages are not sent via MAIL.  They are passed
+between nodes using a special protocol, NNTP.  Users must use a NEWS reader
+package to read them.  However, it is possible to read NEWS remotely over a
+network, and therefore avoiding having to actually store the messages.
+BULLETIN is setup to be used mainly in this client mode, i.e. it can read
+messages on another node via TCP or DECNET.  This is useful, since the number
+of NEWS groups total over 1000, the disk space required for storage is very
+high.  If you are interested in finding a server node that would allow you to
+read NEWS, and do not know of one (i.e. a USENET node), I know of no official
+way of doing so.  However, one suggestion was to try connecting to BBN.COM via
+ANONYMOUS FTP and look through the directory uumap/comp.mail.maps to find a
+USENET node near you to contact. 

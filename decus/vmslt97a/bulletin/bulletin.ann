@@ -1,0 +1,26 @@
+Article 168253 of comp.os.vms:
+BULLETIN is a bulletin board utility which I wrote for VMS.  However,  because
+many  of  our VAX users moved to PCs and MACs, they have wanted access to read
+and post to the BULLETIN folders.  In the past I accomplished this  via  EMAIL
+and  used  the  feature  which  allowed  mail to be sent to and from a folder.
+However, some people have asked for Web access.  In order  to  easily  provide
+this  feature  without  a  lot of work, we decided to do the following:  Since
+news server software is now easily  and  cheapily  available,  and  most  news
+readers  (i.e. Netscape) have the ability to read usenet news groups from more
+than one news server, I set up a local  news  server  to  serve  private  news
+groups.   I then modified BULLETIN to allow a folder with email access to also
+have the ability to post and receive to a specified news group.  I also had to
+modify BULLETIN to allow it to access more than one news server.  Thus, a user
+can now post and read the same folder either via either  BULLETIN,  EMAIL,  or
+WEB access via a newsgroup. 
+
+The new version of BULLETIN (v2.3) which has this  feature  is  available  via
+anonymous ftp to PSFC.MIT.EDU in the BULLETIN sub-directory. 
+
+Note:  The newsgroup-folder feature had existed in the past but would not work
+with  email.  It also was crude in that if you added a message, it would first
+post the message to the newsgroup and then later be added to the folder.    It
+now is added immediately to the folder.  Sharp users will note that this gives
+BULLETIN the ability to be used as a newsgroup to mailing list gateway. 
+
+

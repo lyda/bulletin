@@ -1,0 +1,201 @@
+The following are instructions for creating and installing the BULLETIN
+utility. None of the command procedures included here are sophisticated, so it
+is likely that several modifications will have to be made by the installer.
+The installer should enable all privileges before installation.
+
+Once installation is complete, it is suggested that the installer enter
+BULLETIN and read HELP FOLDERS to see the options available when creating
+or modifying folders.  BULLETIN creates a default folder called GENERAL
+which is a SYSTEM folder (allows messages to be posted which are displayed
+in full when people login.)  This folder can be modified (name changed,
+SYSTEM setting removed, etc.), but it will remain the default folder
+which is selected when BULLETIN is entered, and it cannot be deleted.
+
+One of the main uses of BULLETIN, besides storage of messages that are manually
+entered by users, is storage of messages from network mailing lists.  This is
+done by using the BBOARD feature, which is enabled using the SET BBOARD command
+inside BULLETIN.  The alternative method is for mail messages to be written
+directly by a mailing program by calling internal BULLETIN routines.  Such a
+a program has been written for the popular mail utilities PMDF and MX.  If you
+wish to do so for another utility, read the text file WRITEMSG.TXT.  I would be
+glad to include any such programs with my distribution if you think such a
+program would be of use to other users.
+
+Responding to mail which is added via the BBOARD feature is done using
+VMS MAIL.  The name of the mail protocol to use for responding by mail
+can be either hardcoded by putting in BULLNEWS.INC, or by defining the
+system logical name BULL_NEWS_MAILER, i.e. DEFINE BULL_NEWS_MAILER "MX%".
+
+If for some reason this is inappropriate, you can define BULL_MAILER
+to point to a command procedure, and which will be run instead of VMS MAIL.
+The parameters passed to this procedure are P1 = username and P2 = subject.
+
+1) CREATE.COM
+   This will compile and link the BULLETIN sources. Also, there are several
+   INCLUDE files for the fortran sources (.INC files). BULLETIN will create it's
+   data files in the directory pointed to by the logical name BULL_DIR.  If you
+   elect not to use this definition, BULLFILES.INC should be modified.
+   Note that after this procedure compiles the sources, it puts the objects
+   into an object library, and then deletes all the OBJ files in the directory.
+
+   CREATE.COM will automatically determine if you are running on an alpha
+   rather than a vax and will issue the appropriate commands for that cpu.
+   Of course, separate executables are needed for the two cpus, so if your 
+   site has both, you will have to run this procedure separately on each.
+
+   NOTE 1: If you plan on using the USENET NEWS reader capability of BULLETIN,
+   read NEWS.TXT for installation instructions before compiling.
+
+   NOTE 2: The maximum number of folders for this distribution is 96 folders.
+   If you wish to increase this, modify BULLUSER.INC and recompile the sources.
+   When the new executable is run, it will create a new BULLUSER.DAT data file
+   and rename the old one to BULLUSER.OLD.  You cannot reduce the number of
+   folders.
+
+2) INSTALL.COM
+   The following procedure copies the executable image to BULL_DIR and
+   installs it with certain privileges.  It also installs the necessary
+   help files in SYS$HELP.  (BULLETIN help file is installed into the
+   system help library HELPLIB.HLB.  If you don't wish this done, delete
+   or modify the appropriate line in the procedure.  Also, the help
+   library for the BULLETIN program, BULL.HLB, can be moved to a different
+   directory other than SYS$HELP.  If this is done, the system logical name
+   BULL_HELP should be defined to be the directory where the library is
+   to be found.)
+
+3) LOGIN.COM
+   This contains the commands that should be executed at login time
+   by SYS$MANAGER:SYLOGIN.COM.  It defines the BULLETIN commands.
+   It also executes the command BULLETIN/LOGIN in order to notify
+   the user of new messages.  NOTE: If you wish the utility to be a
+   different name than BULLETIN, you should modify this procedure.
+   The prompt which the utility uses is named after image executable.
+   If you want messages displayed upon logging in starting from
+   oldest to newest (rather than newest to oldest), add /REVERSE to
+   the BULLETIN/LOGIN command.  Note that users with the DISMAIL
+   flag setting in the authorization file will not be notified of
+   new messages.  See help on the SET LOGIN command within the BULLETIN
+   utility for more information on this.  Also, please note that when
+   a brand new user to the system logins, to avoid overwhelming the new
+   user with lots of messages, only PERMANENT SYSTEM messages are displayed.
+
+   If you want SYSTEM messages, i.e. messages which are displayed in full
+   when logging in, to be continually displayed for a period of time rather
+   than just once, you should add the /SYSTEM= qualifier.  This is documented
+   in BULLETIN.HLP, although there it is referred to only with respect to
+   a user wanting to review system messages.  It can be added with /LOGIN.
+
+   DECWINDOWS users should note the following: Both SYLOGIN and LOGIN are
+   executed twice, once before the terminal is actually created, while
+   SYS$OUTPUT is still a mailbox, the other time after the terminal is
+   created.  To avoid this, place the following code in both procedure. 
+   It causes them to execute only when the output is a terminal. This code
+   also helps to allow programs to be placed in LOGIN.COM that prompt for
+   terminal input.  BULLETIN does this if you select READNEW mode for
+   displaying messages when logging in, as READNEW mode will ask you if
+   you want to display the messages text.  Attempts to read terminal input
+   under DECWINDOWS when SYS$OUTPUT is still a mailbox will cause DECTERM
+   creation to fail.  (This problem is fixed under MOTIF).
+
+   $ IF F$LOCATE("_TW",F$GETJPI("","PRCNAM")) .NE. 0 THEN GOTO START
+   $ IF "''F$MODE()'" .NES. "INTERACTIVE" THEN GOTO START
+   $ IF F$GETDVI("SYS$OUTPUT","TRM") THEN GOTO START
+   $ GOTO FINISH
+   $START:
+   .
+   .
+   body of SYLOGIN.COM (including BULLETIN command)
+   .
+   .
+   $FINISH:
+   $ EXIT
+
+4) BULLSTART.COM
+   This procedure contains the commands that should be executed after
+   a system startup.  It should be executed by SYS$MANAGER:SYSTARTUP.COM.
+   It installs the BULLETIN utility with correct privileges.  It also
+   includes the command BULLETIN/STARTUP.  This starts up a detached process
+   with the name BULLCP.  It periodically checks for expire messages,cleanups
+   empty space in files, and converts BBOARD mail to messages.  It also allows
+   other DECNET nodes to share it's folders.  If you don't want this feature
+   and don't plan on having multiple folders or make use of BBOARD, you could
+   eliminate this command if you like.  However, it is highly recommended that
+   you create this process to avoid extra overhead when users login.  NOTE:
+   BULLCP normally is created so it is owned by the DECNET account.  If that
+   account does not exist, BULLCP will be owned by the account that issues
+   the BULLETIN/START command.  In that case, access via other DECNET nodes
+   will not be available.
+
+   If you are installing BULLETIN on a cluster and plan to have the bulletin
+   files be shared between all of the cluster nodes, you only need to have
+   this process running on one node. On all other nodes, the system logical
+   name BULL_BULLCP should be defined (to anything you want) so as to notify
+   BULLETIN that BULLCP is running. (On the local node where BULLCP is running,
+   this logical name is automatically defined.)
+
+   The system logical name BULL_CUSTOM can be defined to enable several 
+   features.  It is equated to a hex number string.  
+	Bit 0 set = need privileges to create folder.
+	    1 set = captive account can write files.
+	    2 set = captive account can use editor. 
+   
+   If you want to have more than one database, you can do so by redefining 
+   BULL_DIR to another directory.  However, only directories that are 
+   defined in the list of equivalence names pointed to by the system logical 
+   name BULL_DIR_LIST are allowed.  For example:
+
+	DEFINE/SYSTEM BULL_DIR_LIST SITE$ROOT:[SYSEXE],USER1:[MRL]
+
+   Then BULL_DIR can be defined as SITE$ROOT:[SYSEXE] or USER1:[MRL].  
+   BULL_DIR_LIST must be defined on all nodes in a cluster.
+   
+   The use of the MARK command to mark messages require that a file be
+   created for each user which saves the marked info.  That file file is
+   stored in the directory pointed to by the logical name BULL_MARK.  You can
+   either let users who want to use this command define it themselves, or
+   you can define it for them, i.e. DEFINE/SYSTEM BULL_MARK SYS$LOGIN.
+
+5) INSTRUCT.COM
+   This procedure adds 2 permanent messages which give a very brief
+   description about the BULLETIN utility, and how to turn off optional
+   prompting of non-system messages (via SET NOREADNEW).
+
+6) BOARD_SPECIAL.COM
+   This command procedure describes and illustrates how to use the
+   SET BBOARD/SPECIAL feature.  This feature allows the use of BBOARD
+   where the input does not come from VMS MAIL.  For example, this could
+   be used in the case where mail from a non-DEC network is not stored
+   in the VMS MAIL.  Another example is BOARD_DIGEST.COM.  This file
+   takes mail messages from "digest" type mailing lists and splits them
+   into separate BULLETIN messages for easier reading.
+
+   To use this feature, place the special command procedure into the
+   bulletin file directory using the name BOARD_SPECIAL.COM.  If you want
+   to have several different special procedure, you should name the command
+   procedure after the username specified by the SET BBOARD command.
+
+7) UPGRADE.COM
+   This procedure is used to upgrade to a new version of BULLETIN.
+   See comments for instructions.
+
+8) MASTER.COM
+   If you are using PMDF, and want to use the BBOARD option, a set of
+   routines are included which will allow PMDF to write message directly
+   into folders, which is a much more effecient way of doing it than
+   the normal BBOARD method of using VMS MAIL.  Read PMDF.TXT for how
+   to do this.
+
+9) OPTIMIZE_RMS.COM
+   This routine optimizes index files.  To run, type @OPTIMIZE_RMS.COM
+   followed by the filename.  If you omit the filename, it will prompt
+   you to allow you to turn off or on several different types of RMS
+   compression.  The default is to turn on all types of compression.
+   The optimization will cause the file to be compressed.
+
+   If you use the NEWS feature, it is suggest that you run this procedure
+   on BULLNEWS.DAT after it is created.  Compressing that file greatly speeds
+   up the NEWS update process.  If you are tight on space, and have been
+   running BULLETIN for a long time, it might also be useful to compress
+   BULLINF.DAT if that file is very large.  However, compressing that (or
+   the other BULLETIN data files) don't appear to save any execution time,
+   unlike BULLNEWS.DAT.
