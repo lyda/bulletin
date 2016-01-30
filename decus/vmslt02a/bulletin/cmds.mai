@@ -1,0 +1,22 @@
+The address for getting BULLETIN is BULLETIN@PFC.MIT.EDU.
+
+Valid commands are:
+	SEND ALL [SINCE time]	Sends all bulletin files.
+				If SINCE time specified, only files created
+				since that time will be sent.
+	SEND filename		Sends the specified file
+				(only one file per command).
+	DIR			Lists available files.
+	BUGS			Sends a list of the latest bug fixes.
+	HELP or INFO		Sends a brief description of BULLETIN.
+	SUBSCRIBE		Subscribes to mailing list for upgrade
+				notifications.
+	UNSUBSCRIBE		Unsubscribes from mailing list.
+
+Send those commands in either the text of the message, one command per line,
+or send a single command in the subject header.
+
+BULLETIN is also available via ANONYMOUS FTP from PFC.MIT.EDU, but the account
+is set at low priority, so I suggest using it during non-prime hours.
+
+								Mark

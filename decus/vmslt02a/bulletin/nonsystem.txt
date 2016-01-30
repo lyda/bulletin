@@ -1,0 +1,16 @@
+Non-system bulletins (such as this) can be submitted by any user.  Users are
+alerted at login time that new non-system bulletins have been added, but only
+their topics are listed.  Optionally, users can be prompted at login time to
+see if they wish to read the bulletins.  When reading the bulletins in this
+manner, the bulletins can optionally be written to a file.  If you have the
+subdirectory [.BULL] created, BULLETIN will use that directory as the default
+directory to write the file into.
+
+A user can disable this prompting featuring by using BULLETIN as follows: 
+
+$ BULLETIN
+BULLETIN> SET NOREADNEW
+BULLETIN> EXIT
+
+Afterwords, the user will only be alerted of the bulletins, and will have to
+use the BULLETIN utility in order to read the messages.

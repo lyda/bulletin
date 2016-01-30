@@ -1,0 +1,125 @@
+	.Title	SETUSER
+;
+;	Program Setuser
+;
+;	This program will change the username and UIC of the running process
+;
+;	To assemble:	$ MACRO SETUSER
+;			$ LINK SETUSER,SYS$SYSTEM:SYS.STB/SELECT
+;
+	.LIBRARY	/SYS$LIBRARY:LIB.MLB/
+	$PCBDEF				;define PCB offsets
+	$JIBDEF				;define JIB offsets
+	$UAFDEF				;define user authorization file offsets
+INFAB:	$FAB	FAC=GET -		;only gets on input file
+		FNM=<SYSUAF> -		;SYSUAF may be defined as logical name
+		DNM=<SYS$SYSTEM:.DAT> -	;These are default directory & suffix
+		SHR=<PUT,GET,DEL,UPD>	;allow full sharing
+INRAB:	$RAB	FAB=INFAB -		;FAB for this RAB
+		KBF=COMMLD+8 -		;key value is typed in by user
+		KRF=0 -			;primary key
+		KSZ=12 -		;username is 12 bytes long
+		RAC=KEY -		;key access on this file
+		ROP=NLK -		;don't lock read records
+		UBF=BUFFER -		;address of buffer for I/O
+		USZ=2048		;size of buffer
+BUFFER:	.BLKB	2048			;buffer for data
+COMMLD:	.ASCID	/            /		;space for typed in username
+PROMPTD:.ASCID	/Username: /		;prompt string
+COMMLDS:.WORD	0			;space for number of bytes typed in
+FAODESC:.LONG	80
+	.LONG	FAOBUF
+FAOBUF:	.BLKB	80
+FAOLEN:	.BLKW	1
+	.BLKW	1
+FORSTR:	.ASCID	/PID:!XL from:[!OW,!OW] !AD to:[!OW,!OW] !AD/
+TT:	.ASCID	/SYS$OUTPUT/
+CHANTT:	.WORD	0			;space for terminal channel number
+IOSB:	.QUAD	0
+OLDUSER:.BLKB	12			;space for old username
+OLDUIC:	.BLKL	1			;space for old uic
+ERRORB:	JMP	ERROR			;for branch out of range
+
+JPIUSER:	.BLKB	12
+JPIUSER_LEN:	.BLKL	1
+
+	$DEFINI IT			;DEFINE ITEM LIST FOR GETJPI
+$DEF	ITL	.BLKW	1		;LENGTH OF OUTPUT BUFFER
+$DEF	ITM	.BLKW	1		;ITEM CODE (PROCESS NAME)
+$DEF	ITA	.BLKL	1		;ADDR OF OUTPUT BUFFER
+$DEF	ITAL	.BLKL	1		;ADDR OF WORD TO RECIEVE BYTES USED
+$DEF	ITEND	.BLKL	1		;ZERO LONG WORD TO END LIST
+$DEF	ITSIZE				;SIZE NEEDED FOR IT BLOCK
+	$DEFEND IT
+
+	.ENTRY	START,^M<>		;start of program
+	PUSHAW	COMMLDS			;address of word to get read byte count
+	PUSHAL	PROMPTD			;address of prompt string descriptor
+	PUSHAL	COMMLD			;address of descriptor to get command
+	CALLS	#3,G^LIB$GET_FOREIGN	;use run time library to get command
+	BLBC	R0,ERRORB		;low bit clear error
+	$OPEN	FAB=INFAB		;open file
+	BLBC	R0,ERRORB		;low bit clear error
+	$CONNECT RAB=INRAB		;connect file
+	BLBC	R0,ERRORB		;low bit clear error
+	$GET	RAB=INRAB		;read a record
+	CMPL	R0,#RMS$_RNF		;record not found?
+	BEQL	errorb			;that's all folks
+	CMPL	R0,#RMS$_NORMAL		;ok?
+	BNEQ	ERRORB			;no so quit
+
+	SUBL	#ITSIZE,SP		;GET SPACE FOR ITEM LIST
+	MOVL	SP,R2			;POINT TO IT
+	MOVW	#12,ITL(R2)		;SET UP ITEM LIST
+	MOVW	#JPI$_USERNAME,ITM(R2)
+	MOVAB	JPIUSER,ITA(R2)
+	MOVAW	JPIUSER_LEN,ITAL(R2)
+	CLRL	ITEND(R2)
+	$GETJPI_S	ITMLST=(R2)	;GET PROCESS NAME
+	ADDL	#ITSIZE,SP		;RESTORE STACK POINTER
+
+	MOVL	INRAB+RAB$L_RBF,R7	;put address of read record in R7
+	MOVL	UAF$L_UIC(R7),R8	;R8 has UIC we want
+	$CMKRNL_S TWEAK			;change mode to kernel to tweak UIC
+					;and username
+	BLBC	R0,ERROR		;low bit clear error
+	ADDL3	#UAF$S_USERNAME,R7,R8
+	ADDL3	#UAF$T_USERNAME,R7,R9
+	$FAO_S	CTRSTR=FORSTR,-		;format string
+		OUTBUF=FAODESC,-	;char descript for formatted output
+		OUTLEN=FAOLEN,-		;long word to hold length of output
+		P1=R9,-			;PID
+		P2=OLDUIC+2,-		;old UIC, group number
+		P3=OLDUIC,-		;old UIC, member number
+		P4=#12,-		;usernames are 12 bytes
+		P5=#OLDUSER,-		;address of old username
+		P6=UAF$L_UIC+2(R7),-	;UIC, group number
+		P7=UAF$L_UIC(R7),-	;UIC, member number
+		P8=R8,-			;usernames are 12 bytes
+		P9=R9			;address of username
+	BLBC	R0,ERROR		;low bit clear error
+	MOVL	FAOLEN,FAODESC
+	PUSHAL	FAODESC			;address of descriptor to get command
+	CALLS	#1,G^LIB$PUT_OUTPUT	;use run time library to get command
+	BLBC	R0,ERROR		;low bit clear error
+EXIT:
+	$CLOSE	FAB=INFAB -		;close file
+		ERR=ERROR
+ERROR:	$EXIT_S	R0			;exit with error if any
+	.ENTRY	TWEAK,^M<>		;beginning of kernel mode code
+	MOVL	@#CTL$GL_PCB,R11	;put address of our PCB in R11
+	MOVL	PCB$L_PID(R11),R9	;save PID
+	MOVL	PCB$L_UIC(R11),OLDUIC	;save old UIC
+	MOVL	R8,PCB$L_UIC(R11)	;change our UIC
+	MOVL	PCB$L_JIB(R11),R10	;put address of Job Info Block in R10
+					;MOVC blats R0-R5
+	MOVC3	#12,JIB$T_USERNAME(R10),OLDUSER ;save old username
+	CMPC3	JPIUSER_LEN,JPIUSER,OLDUSER
+	BEQL	GOOD
+	CLRL	R0
+	RET
+GOOD:	MOVC3	#12,UAF$T_USERNAME(R7),JIB$T_USERNAME(R10) ;change username JIB
+	MOVC3	#12,UAF$T_USERNAME(R7),CTL$T_USERNAME ;change username in P1
+EEXIT:	MOVL	#SS$_NORMAL,R0		;set normal exit status
+	RET				;end of exec mode code
+	.END	START			;end of program

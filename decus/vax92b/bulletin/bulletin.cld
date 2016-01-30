@@ -1,0 +1,43 @@
+!
+!  This file is the CLD file used to define a command to execute
+!  BULLETIN by using CDU, which adds the command  to the command table.
+!  The alternative is to define a symbol to execute BULLETIN.
+!  Either way will work, and it is up to the user's to decide which
+!  method to work.  (If you don't know which, you probably should use
+!  the default symbol method.)
+!
+
+Define Verb BULLETIN
+  Image BULL_DIR:BULLETIN
+  Parameter P1, Label = SELECT_FOLDER
+  Qualifier ALL
+  Qualifier BBOARD
+  Qualifier BULLCP
+  Qualifier CLEANUP, Value (Required)
+  Qualifier EDIT
+  Qualifier KEYPAD, Default
+  Qualifier LOGIN
+  Qualifier MARKED
+  Qualifier PAGE, Default
+  Qualifier PGFLQUOTA, Value (Type = $NUMBER, Required)
+  Qualifier PROMPT, Value (Default = "BULLETIN"), Default
+  Qualifier READNEW
+  Qualifier REVERSE
+  !
+  ! The following line causes a line to be outputted separating system notices.
+  ! The line consists of a line of all "-"s, i.e.:
+  !--------------------------------------------------------------------------
+  ! If you want a different character to be used, simply put in the desired one
+  ! in the following line.  If you want to disable the feature, remove the
+  ! Default at the end of the line.  (Don't remove the whole line!)
+  !
+  Qualifier SEPARATE, Value (Default = "-"), Default
+  Qualifier SEEN
+  Qualifier STARTUP
+  Qualifier STOP
+  Qualifier SYSTEM, Value (Type = $NUMBER, Default = "7")
+  Qualifier UNMARKED
+  Qualifier UNSEEN
+  Qualifier WIDTH, Value (Type = $NUMBER, Required)
+  Qualifier WSEXTENT, Value (Type = $NUMBER, Required)
+  Disallow (WSEXTENT Or PGFLQUOTA) And Not STARTUP

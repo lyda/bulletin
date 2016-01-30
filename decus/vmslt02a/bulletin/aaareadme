@@ -1,0 +1,68 @@
+BULLETIN   is   public   domain   software.    (I   will  gladly  accept
+recommendations for new features,  not  for  changes  that  are  due  to
+"personal" preference.)
+
+If you are running a version of BULLETIN older than 2.11,  this  version
+will  modify  the  format of some of the data files.  (This will be done
+automatically  when  the  new  version  is   run).    After   successful
+installation,  the  older  versions of these files can be removed. NOTE:
+Problems  can  occur if  the  old  version  of BULLETIN is run after the
+data files have been modified.  Such a situation is possible on a
+cluster where each node has installed  the  executable  separately.   To 
+help  installation,  a new command procedure UPGRADE.COM has been 
+included.  Read the comments in the file for information on how to use
+it. 
+ 
+NOTE: The following commands can be sent to BULLETIN@PSFC.MIT.EDU:
+	SEND ALL [SINCE time]	Sends all bulletin files.
+				If SINCE time specified, only files created
+				since that time will be sent.
+	SEND filename		Sends the specified file.	
+	BUGS			Sends a list of the latest bug fixes.
+	HELP or INFO		Sends a brief description of BULLETIN.
+	SUBSCRIBE               Subscribes to mailing list for upgrade
+                                notifications.
+        UNSUBSCRIBE             Unsubscribes from mailing list.
+
+NOTE:  An old bug might have changed the protection on the BULLETIN data
+files.  The protection on all data files (i.e.  B*.DAT,  *.BULLFIL,  and
+*.BULLDIR) should be (RWED,RWED,,).
+
+You will be receiving 22 files (NOT NECESSARILY IN THIS ORDER!):
+	1) BULLETIN.FOR
+	2) BULLETIN0.FOR
+	3) BULLETIN1.FOR
+	4) BULLETIN2.FOR
+	5) BULLETIN3.FOR
+	6) BULLETIN4.FOR
+	7) BULLETIN5.FOR
+	8) BULLETIN6.FOR
+	9) BULLETIN7.FOR
+	10) BULLETIN8.FOR
+	11) BULLETIN9.FOR
+	12) BULLETIN10.FOR
+	13) BULLETIN11.FOR
+	14) ALLMACS.MAR
+	15) BULLCOMS1.HLP
+	16) BULLCOMS2.HLP
+	17) BULLET1.COM
+	18) BULLET2.COM
+	19) PMDF.COM
+	20) MX.COM
+        21) NEWS.COM
+	22) ALLMACS_AXP.MAR
+
+(They  will  be  identified  in  the  SUBJECT  header.)  BULLET1.COM and
+BULLET2.COM are command procedures which when run, will  create  several
+small files.  After you run them, you can delete them.  If you have PMDF
+at your site, you should also run PMDF.COM.  However, this only  applies
+to  PMDF  V3.2  or earlier, as later versions of PMDF have the necessary
+interface code for BULLETIN included in it.  In that case,  or  in  case
+you  don't have PMDF, you can delete it.  The same applies to MX.  Then,
+read AAAREADME.TXT for BULLETN installation instructions.   If  you  are
+using the news feature, NEWS.COM contains files which pertain to news.
+
+NOTE: When creating these files (using the EXTRACT command) from the VMS
+MAIL utility, you will have to strip  off  any  mail  headers  that  are
+present,  including blank lines.
+                                              MRL@PSFC.MIT.EDU

@@ -1,0 +1,8 @@
+This message is being displayed by the BULLETIN facility.  This is a non-DEC
+facility, so it is not described in the manuals.  Messages can be submitted by
+using the BULLETIN command.  System messages, such as this one, are displayed
+in full, but can only be entered by privileged users.  Non-system messages can
+be entered by anyone, but only their topics will be displayed at login time,
+and will be prompted to optionally read them.  (This prompting feature can be
+disabled).  All bulletins can be reread at any time unless they are deleted or
+expire.  For more information, see the on-line help (via HELP BULLETIN). 

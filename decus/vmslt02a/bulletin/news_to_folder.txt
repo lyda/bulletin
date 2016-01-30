@@ -1,0 +1,48 @@
+It is possible to automatically have messages from a news group be fed into  a
+real  folder, and visa versa.  This allows BULLETIN messages to be shared with
+a news group, thus giving access to such messages to people who  do  not  have
+access  to  BULLETIN.   This can also be combined with email access for people
+who have neither BULLETIN nor news group access. 
+
+To associate a folder with a news group, place the name of the news group into
+the  folder  description  surrounded  by  <>, i.e. <misc.test>.  It must be in
+lower case.  (Other text is allowed in the description, i.e. "THIS IS  A  TEST
+FOLDER  <misc.test>".)  When messages are added the folder, they are also sent
+to the news group, and new messages from the group are posted  to  the  folder
+(via  the  BULLCP  process  which wakes up on a periodic basis).  Whenever you
+modify the folder description and specify the news group  name,  you  will  be
+prompted  as  to  whether  you  want  to initializee the news group counter to
+either load all the messages present in the news group, or to load  only  news
+messages that appear there. 
+
+Messages posted to the news group from such a folder have a  special  line  in
+their  header  indicating  they were sent from that node using bulletin.  When
+bulletin feeds new postings back to the folder, it will see that  header  line
+and  also see that it was posted from that node, and thus will avoid adding it
+to the folder (and thus creating a duplicate message).  Note that messages are
+added  to  the  news  group  via  the  BULLCP process, so they will not appear
+immediately after being added to the folder. 
+
+If you are modifying an existing folder to make  it  associated  with  a  news
+group, and if you want to copy any existing messages in the folder to the news
+group, you can do that by using the command COPY/ORIGINAL/LOCAL and specifying
+the  news  group  as the destination.  /ORIGINAL will cause the original owner
+names and dates to be preserved (note, however, that dates older than 14  days
+in  the  past are not usually accepted by the news server, so dates older than
+that will be changed to the present date).  /LOCAL  will  create  the  special
+header  line in the messages to prevent BULLCP from adding those messages back
+to the folder from the news group.  /ALL can be  specified  to  copy  all  the
+messages in the folder. 
+
+If you create a remote folder that points to a folder that has  a  news  group
+associated  with  it,  you  do  not  have  to  specify  the  news group in the
+description of the remote node.  However, on the  node  on  which  the  folder
+actually  exists,  the  news  group  has be a stored news group, i.e. you must
+issue the command SET NEWS/STORED for that news group. 
+
+When a news group is specified for a folder, it is still possible to associate
+an  email  address  for  the messages to be sent to in the folder description.
+You do this by using [] to enclose the address rather than the usual <>,  i.e.
+[mrl@pfc.mit.edu]  See  help in BULLETIN on the command CREATE/DESCRIPTION for
+more info about associated email addresses.  Note that  these  features  allow
+you to create a full gateway between a news group and a mailing list. 
