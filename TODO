@@ -8,3 +8,5 @@
      vms93a/gce93a/net93a
      vax92a/gce92a/net92a/
      vax90b1/gce90b/net90b/
+2. Need to get a dump of ls -lR or something.  Git doesn't save any of
+   the file time attributes and they might be of use.
