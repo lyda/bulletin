@@ -1,17 +1,17 @@
-ç1 BULLETIN
-çInvokes the PFC BULLETIN Utility.  This utility is used for reading, adding
-çand deleting bulletins.  Any user can submit a bulletin.  Users are
-çnotified at login time that new bulletins have been added and the topics of
-çthose bulletins are displayed.  Reading of those bulletins is optional.
-ç(Use the command SET READNEW while in BULLETIN for setting automatic
-çreading.)  Privileged users can add system bulletins that are displayed
-çin full at login time.  These bulletins are also saved, and can be read 
-çby BULLETIN.  Bulletins are automatically deleted after a specifiede
-çexpiration date, or they can manually be deleted by either the submitter
-çof the bulletin or a privileged user. 
-ç
-çBULLETIN has an interactive help available while using the utility.b
-ç
-ç Format:
-ç
-ç      BULLETIN
+1 BULLETIN
+Invokes the PFC BULLETIN Utility.  This utility is used for reading, adding
+and deleting bulletins.  Any user can submit a bulletin.  Users are
+notified at login time that new bulletins have been added and the topics of
+those bulletins are displayed.  Reading of those bulletins is optional.
+(Use the command SET READNEW while in BULLETIN for setting automatic
+reading.)  Privileged users can add system bulletins that are displayed
+in full at login time.  These bulletins are also saved, and can be read 
+by BULLETIN.  Bulletins are automatically deleted after a specifiede
+expiration date, or they can manually be deleted by either the submitter
+of the bulletin or a privileged user. 
+
+BULLETIN has an interactive help available while using the utility.b
+
+ Format:
+
+      BULLETIN

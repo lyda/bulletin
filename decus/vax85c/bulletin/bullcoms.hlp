@@ -1,135 +1,135 @@
-ç1 ADD
-çAdds a bulletin to the bulletin file.  A file can be specified which
-çcontains the bulletin.  Otherwise, BULLETIN will prompt for the text.
-çBULLETIN will ask for an expiration date and a header to contain the
-çtopic of the bulletin.
-ç
-çFormat
-ç  ADD [file-name]
-ç
-çAll the qualifiers except for /EDIT and /NODES are restricted to users
-çwith SETPRV privileges.
-ç2 /BELL
-çThis option is restricted to privileged users.  It is used in conjunction 
-çwith the /BROADCAST qualifier.  If specified, the bell is rung on the 
-çterminals when the bulletin is broadcasted.t
-ç2 /BROADCAST
-çThis option is restricted to privileged users.  If specified, bulletin
-çis both saved in the bulletin file and broadcasted to all users logged
-çin at the time.f
-ç2 /EDIT
-çDetermines whether or not the EDT editor is invoked to edit the bulletin
-çyou are sending.
-ç2 /NODES=(nodes[,...])
-çSpecifies to send the bulletin to other DECNET nodes.  The BULLETIN utilityh
-çmust be installed properly on the other nodes.  You will prompted for thel
-çusername to use at the other node.  If you give a different username thanc
-çthat of the local node, or if privileged qualifiers are specified, you willi
-çbe prompted for the password of your account on the other nodes.  At
-çpresent, if the password is invalid, the bulletin will be rejected on then
-çnode, but no error message will be displayed on the local node that this
-çhappened. 
-ç2 /PERMANENT
-çThis option is restricted to privileged users.  If specified, bulletin
-çwill be a permanent bulletin and will never expire.r
-ç2 /SHUTDOWNg
-çThis option is restricted to privileged users.  If specified, bulletin
-çwill be automatically deleted after a computer shutdown has occurred.o
-ç2 /SYSTEM 
-çThis option is restricted to privileged users.  If specified, bulletin
-çis both saved in the bulletin file and displayed in full as a system
-çnotice when a user logs in.  System notices should be as brief as possible
-çto avoid the possibility that system notices could scroll off the screen. 
-ç1 BACK
-çDisplays the bulletin preceding the current bulletin.r
-ç1 DELETE
-çDeletes the specified bulletin.  If no bulletin is specified, the currentf
-çbulletin is deleted.  Only the original owner or a privileged user can
-çdelete a bulletin.
-ç
-çFormat
-ç  DELETE [bulletin-number]
-ç
-çThe bulletin's relative number is found by the DIRECTORY command. 
-ç1 DIRECTORY 
-çLists a summary of the bulletins.  The bulletin number, submitter's name,a
-çdate, and subject of each bulletin is displayed.
-ç1 EXIT
-çExits the BULLETIN program.h
-ç1 FILE
-çCopies the current bulletin to the named file.  The file-name parameters
-çis required, and consists of up to 9 alpha-numeric characters in length.
-ç
-çFormat:s
-ç    FILE file-name
-ç2 /HEADERç
-ç
-ç/[NO]HEADER[
-ç
-çControls whether a header containing the owner, subject, and date of the c
-çbulletin is written in the file.  The default is to write the header.i
-ç1 Bulletin
-çThe BULLETIN utility permits a user to create a bulletin for reading by 
-çall users.  Users are notified upon logging in that new bulletins have
-çbeen added, and what the topic of the bulletins are.  Actual reading off
-çthe bulletins is optional. (See the command SET READNEW for info onE
-çautomatic reading.)  Bulletins are automatically deleted when theirh
-çexpiration date has passed.j
-ç
-ç1 HELP
-çTo obtain help on any topic, type:
-ç
-ç	HELP  topic
-ç1 NEXT
-çSkips to the next bulletin and displays it.  This is useful when pagingt
-çthrough the bulletins and you encounter a particularly long bulletin
-çthat you would like to skip over.n
-ç1 READ
-çDisplays the specified bulletin.  If you do not specify a bulletin, then
-çthe first time you enter the command, the oldest bulletin will bee
-çdisplayed.  However, if there are new bulletins, the first new bulletin 
-çwill be displayed.  Each time you enter the command, the next page, or if 
-çthere are no more pages, the next bulletin will be displayed. 
-ç
-çFormat
-ç  READ [bulletin-number]
-ç
-çThe bulletin's relative number is found by the DIRECTORY command.d
-ç
-çPressing just <RETURN> performs the same as the READ command.f
-ç1 REPLACEp
-çReplaces an existing bulletin in the bulletin file.  This is for changingl
-çpart or all of a bulletin without causing users who have already seen then
-çbulletin to be notified of it a second time.  If the text of the bulletin 
-çis to be changed, a file can be specified which contains the text.
-çOtherwise, BULLETIN will prompt for the text.  The expiration date and
-çheader can also be changed.  If neither /EXPIRATION, /HEADER, nor /TEXTT
-çare specified, it is assumed the whole bulletin will be replaced.s
-ç
-çFormat
-ç  REPLACE [file-name]i
-ç2 /EXPIRATIONc
-çSpecifies that the bulletin expiration date is to be replaced.
-ç2 /HEADERe
-çSpecifies that the bulletin header is to be replaced.f
-ç2 /NUMBER=ne
-çSpecifies the bulletin number to be replaced.  If this qualifier is 
-çomitted, the bulletin that is presently being read will be replaced.
-ç2 /TEXT
-çSpecifies that the bulletin text is to be replaced./
-ç1 SETo
-çDefines or changes characteristics associated with automatic reading
-çof bulletins.m
-ç
-çFormat: 
-ç
-ç    SET option
-ç2 READNEWp
-çControls whether you will be prompted upon logging in if you wish to read 
-çnew non-system bulletins (if any exist).  The default is that you are notc
-çprompted.  (Previously this was done by including the BULLETIN/READNEW
-çcommand in one's login command procedure).
-ç
-ç  Format:
-ç
-ç    SET [NO]READNEWt
+1 ADD
+Adds a bulletin to the bulletin file.  A file can be specified which
+contains the bulletin.  Otherwise, BULLETIN will prompt for the text.
+BULLETIN will ask for an expiration date and a header to contain the
+topic of the bulletin.
+
+Format
+  ADD [file-name]
+
+All the qualifiers except for /EDIT and /NODES are restricted to users
+with SETPRV privileges.
+2 /BELL
+This option is restricted to privileged users.  It is used in conjunction 
+with the /BROADCAST qualifier.  If specified, the bell is rung on the 
+terminals when the bulletin is broadcasted.t
+2 /BROADCAST
+This option is restricted to privileged users.  If specified, bulletin
+is both saved in the bulletin file and broadcasted to all users logged
+in at the time.f
+2 /EDIT
+Determines whether or not the EDT editor is invoked to edit the bulletin
+you are sending.
+2 /NODES=(nodes[,...])
+Specifies to send the bulletin to other DECNET nodes.  The BULLETIN utilityh
+must be installed properly on the other nodes.  You will prompted for thel
+username to use at the other node.  If you give a different username thanc
+that of the local node, or if privileged qualifiers are specified, you willi
+be prompted for the password of your account on the other nodes.  At
+present, if the password is invalid, the bulletin will be rejected on then
+node, but no error message will be displayed on the local node that this
+happened. 
+2 /PERMANENT
+This option is restricted to privileged users.  If specified, bulletin
+will be a permanent bulletin and will never expire.r
+2 /SHUTDOWNg
+This option is restricted to privileged users.  If specified, bulletin
+will be automatically deleted after a computer shutdown has occurred.o
+2 /SYSTEM 
+This option is restricted to privileged users.  If specified, bulletin
+is both saved in the bulletin file and displayed in full as a system
+notice when a user logs in.  System notices should be as brief as possible
+to avoid the possibility that system notices could scroll off the screen. 
+1 BACK
+Displays the bulletin preceding the current bulletin.r
+1 DELETE
+Deletes the specified bulletin.  If no bulletin is specified, the currentf
+bulletin is deleted.  Only the original owner or a privileged user can
+delete a bulletin.
+
+Format
+  DELETE [bulletin-number]
+
+The bulletin's relative number is found by the DIRECTORY command. 
+1 DIRECTORY 
+Lists a summary of the bulletins.  The bulletin number, submitter's name,a
+date, and subject of each bulletin is displayed.
+1 EXIT
+Exits the BULLETIN program.h
+1 FILE
+Copies the current bulletin to the named file.  The file-name parameters
+is required, and consists of up to 9 alpha-numeric characters in length.
+
+Format:s
+    FILE file-name
+2 /HEADERç
+
+/[NO]HEADER[
+
+Controls whether a header containing the owner, subject, and date of the c
+bulletin is written in the file.  The default is to write the header.i
+1 Bulletin
+The BULLETIN utility permits a user to create a bulletin for reading by 
+all users.  Users are notified upon logging in that new bulletins have
+been added, and what the topic of the bulletins are.  Actual reading off
+the bulletins is optional. (See the command SET READNEW for info onE
+automatic reading.)  Bulletins are automatically deleted when theirh
+expiration date has passed.j
+
+1 HELP
+To obtain help on any topic, type:
+
+	HELP  topic
+1 NEXT
+Skips to the next bulletin and displays it.  This is useful when pagingt
+through the bulletins and you encounter a particularly long bulletin
+that you would like to skip over.n
+1 READ
+Displays the specified bulletin.  If you do not specify a bulletin, then
+the first time you enter the command, the oldest bulletin will bee
+displayed.  However, if there are new bulletins, the first new bulletin 
+will be displayed.  Each time you enter the command, the next page, or if 
+there are no more pages, the next bulletin will be displayed. 
+
+Format
+  READ [bulletin-number]
+
+The bulletin's relative number is found by the DIRECTORY command.d
+
+Pressing just <RETURN> performs the same as the READ command.f
+1 REPLACEp
+Replaces an existing bulletin in the bulletin file.  This is for changingl
+part or all of a bulletin without causing users who have already seen then
+bulletin to be notified of it a second time.  If the text of the bulletin 
+is to be changed, a file can be specified which contains the text.
+Otherwise, BULLETIN will prompt for the text.  The expiration date and
+header can also be changed.  If neither /EXPIRATION, /HEADER, nor /TEXTT
+are specified, it is assumed the whole bulletin will be replaced.s
+
+Format
+  REPLACE [file-name]i
+2 /EXPIRATIONc
+Specifies that the bulletin expiration date is to be replaced.
+2 /HEADERe
+Specifies that the bulletin header is to be replaced.f
+2 /NUMBER=ne
+Specifies the bulletin number to be replaced.  If this qualifier is 
+omitted, the bulletin that is presently being read will be replaced.
+2 /TEXT
+Specifies that the bulletin text is to be replaced./
+1 SETo
+Defines or changes characteristics associated with automatic reading
+of bulletins.m
+
+Format: 
+
+    SET option
+2 READNEWp
+Controls whether you will be prompted upon logging in if you wish to read 
+new non-system bulletins (if any exist).  The default is that you are notc
+prompted.  (Previously this was done by including the BULLETIN/READNEW
+command in one's login command procedure).
+
+  Format:
+
+    SET [NO]READNEWt

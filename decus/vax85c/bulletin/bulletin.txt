@@ -1,49 +1,49 @@
-çThis file describes the general operation of the BULLETIN utility.
-ç
-çBULLETIN uses 3 files to store its data: BULLETIN.DAT, BULLDIR.DAT, &
-çBULLUSER.DAT.  These files are opened with the shared attribute as much as
-çpossible to allow simultaneous operations on the files.  However, when a
-çbulletin is added or deleted, the file cannot be shared, as this might cause
-çthe file to be corrupted.  Because of this problem, files are closed as soon as
-çpossible so that it may be quickly opened for adding and deleting files. e
-çDuring read operations, the information is passed to temporary storage, thes
-çfile is closed, and then the information is sent to the terminal. This avoids at
-çpossible problem where the terminal output is stopped by the user, therefore
-çdelaying the closing of the file.  Also, the use of CTRL-Y & CTRL-C is disablede
-çwhile the file is opened to avoid lockout problems.c
-ç
-çBULLETIN.DAT stores the actual bulletins in a fixed 80 character length file.k
-çBulletins are store sequentially datewise.  New bulletins are appended to thet
-çend of the file.  When a bulletin is deleted, all the following bulletins arei
-çmoved up in the file to remove the gap, and the file is then truncated toi
-çremove the unused space. u
-ç
-çBULLDIR.DAT is a fixed record length file storing directory entries for each
-çbulletin in BULLETIN.DAT. Each entry contains the header information, length,L
-çand starting record position in BULLETIN.DAT.  The first line of BULLDIR.DAT ist
-ça header containing the date of the next expiration that will occur, the datef
-çof the latest sumbitted bulletin, the number of bulletins, and the total size 
-çof BULLETIN.DAT.  The last two numbers make it easier to add bulletins. Thet
-çdirectory entries then follow, again stored sequentially datewise. r
-ç
-çNOTE: There are several advantages to keeping a seperate directory file versus
-çstoring the header information with the actual bulletin.  Obviously, it avoids
-çhaving to scan through a large bulletin file just to extract headert
-çinformation.  This operation is done when a DIRECTORY listing is requested inu
-çBULLETIN.  More importantly when a login occurs, non-system bulletins just
-çrequire that the header information be displayed.  Having a file with pointers
-çto where the bulletin is stored also avoids requiring the software to read all
-çthe previous bulletins in order to arrive at the desired bulletin.  The main
-çdisadvantage is the extra time spent on locating the second file.  This time
-çappears to be minimal. In all the software, the convention is to open theI
-çdirectory file first, and then if needed to open the bulletin file.  Wheno
-çadding and delete files, this becomes important, as files are opened unshared. d
-çA deadlock might occur if one user opens the bulletin file first while another
-çuser opens the directory file, and then each try to open the alternate file.
-ç
-çBULLUSER.DAT is a relative indexed file, where the keyword is the username ofe
-çthe user.  Each entry contains the latest time that the user logged in, plus
-çthe latest time that the BULLETIN utility was used to read bulletins.  A headere
-çentry with a blank username stores the latest bulletin date.  The information 
-çin this file is used for checking to see if the user should be alerted to newf
-çbulletins or not.ç
+This file describes the general operation of the BULLETIN utility.
+
+BULLETIN uses 3 files to store its data: BULLETIN.DAT, BULLDIR.DAT, &
+BULLUSER.DAT.  These files are opened with the shared attribute as much as
+possible to allow simultaneous operations on the files.  However, when a
+bulletin is added or deleted, the file cannot be shared, as this might cause
+the file to be corrupted.  Because of this problem, files are closed as soon as
+possible so that it may be quickly opened for adding and deleting files. e
+During read operations, the information is passed to temporary storage, thes
+file is closed, and then the information is sent to the terminal. This avoids at
+possible problem where the terminal output is stopped by the user, therefore
+delaying the closing of the file.  Also, the use of CTRL-Y & CTRL-C is disablede
+while the file is opened to avoid lockout problems.c
+
+BULLETIN.DAT stores the actual bulletins in a fixed 80 character length file.k
+Bulletins are store sequentially datewise.  New bulletins are appended to thet
+end of the file.  When a bulletin is deleted, all the following bulletins arei
+moved up in the file to remove the gap, and the file is then truncated toi
+remove the unused space. u
+
+BULLDIR.DAT is a fixed record length file storing directory entries for each
+bulletin in BULLETIN.DAT. Each entry contains the header information, length,L
+and starting record position in BULLETIN.DAT.  The first line of BULLDIR.DAT ist
+a header containing the date of the next expiration that will occur, the datef
+of the latest sumbitted bulletin, the number of bulletins, and the total size 
+of BULLETIN.DAT.  The last two numbers make it easier to add bulletins. Thet
+directory entries then follow, again stored sequentially datewise. r
+
+NOTE: There are several advantages to keeping a seperate directory file versus
+storing the header information with the actual bulletin.  Obviously, it avoids
+having to scan through a large bulletin file just to extract headert
+information.  This operation is done when a DIRECTORY listing is requested inu
+BULLETIN.  More importantly when a login occurs, non-system bulletins just
+require that the header information be displayed.  Having a file with pointers
+to where the bulletin is stored also avoids requiring the software to read all
+the previous bulletins in order to arrive at the desired bulletin.  The main
+disadvantage is the extra time spent on locating the second file.  This time
+appears to be minimal. In all the software, the convention is to open theI
+directory file first, and then if needed to open the bulletin file.  Wheno
+adding and delete files, this becomes important, as files are opened unshared. d
+A deadlock might occur if one user opens the bulletin file first while another
+user opens the directory file, and then each try to open the alternate file.
+
+BULLUSER.DAT is a relative indexed file, where the keyword is the username ofe
+the user.  Each entry contains the latest time that the user logged in, plus
+the latest time that the BULLETIN utility was used to read bulletins.  A headere
+entry with a blank username stores the latest bulletin date.  The information 
+in this file is used for checking to see if the user should be alerted to newf
+bulletins or not.ç

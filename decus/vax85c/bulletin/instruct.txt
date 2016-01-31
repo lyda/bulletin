@@ -1,6 +1,6 @@
-çThis message is being displayed by the BULLETIN facility.  This is a non-DEC
-çfacility, so it is not described in the manuals.  System messages, such as this
-çone, are displayed in full.  Only topics will be displayed for non-system
-çmessages.  Messages are submitted using the BULLETIN command.  Any user may
-çsubmit a non-system message.  Only privileged users can submit a system
-çmessage. For more information, see the on-line help (via HELP BULLETIN). 
+This message is being displayed by the BULLETIN facility.  This is a non-DEC
+facility, so it is not described in the manuals.  System messages, such as this
+one, are displayed in full.  Only topics will be displayed for non-system
+messages.  Messages are submitted using the BULLETIN command.  Any user may
+submit a non-system message.  Only privileged users can submit a system
+message. For more information, see the on-line help (via HELP BULLETIN). 

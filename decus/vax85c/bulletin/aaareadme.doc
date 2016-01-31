@@ -1,73 +1,73 @@
-çThe following are instructions for creating the BULLETIN executable and 
-çinstallation of the utility.  A brief explanation of how the internals
-çof the BULLETIN utility works can be found in BULLETIN.TXT .  None of
-çthe command procedures included here are sophisticated, so it is likely
-çthat several modifications will have to be made by the installer.
-çThe installer should enable all privileges before installation.
-ç
-ç1) CREATE.COM
-ç   This will compile and link the BULLETIN sources. Also, there are severalu
-ç   INCLUDE files for the fortran sources (.INC files). BULLFILES.INC must first 
-ç   be modified before this procedure is run. It contains the names of data files
-ç   which BULLETIN creates. It also has the username for the BBOARD account.t
-ç   BBOARD is an option by which mail sent to the specified username will bet
-ç   converted into bulletins.  This allows a user on a different system, which is
-ç   connected via a network, to be able to submit a bulletin.  This feature can
-ç   be disabled if it is not desired by specifying the username NONE.  In any
-ç   case, you should edit BULLFILES.INC and specify the appropriate device ands
-ç   directories in which you desire that the files be located.  (NOTE: Although
-ç   the BBOARD feature can be used over DECNET, a more sophisticated method
-ç   is available to easily allow one to add bulletins to other DECNET nodes
-ç   with all the features of BULLETIN.  See below).
-ç
-ç2) STARTUP.COM
-ç   The data files that BULLETIN creates should be owned by a system UIC,
-ç   and MUST be protected from users being able to have access them.L
-ç   STARTUP.COM sets the process UIC to [1,4] (you should change this ifc
-ç   you want something else), sets the WORLD and GROUP protection to NONE,t
-ç   adds the bulletin found in the file INSTRUCT.TXT (it is added withl
-ç   /PERMANENT, so it never expires), and then resets the UIC and PROTECTION 
-ç   to what they were before running the procedure.
-ç   INSTRUCT.BUL contains a bulletin with instructions to the users as to
-ç   how to use the BULLETIN utility.  You may want to modify it. 
-ç
-ç3) INSTALL.COM
-ç   The following procedure copies the executable image to SYS$SYSTEM and
-ç   installs it with certain privileges.  It also installs the necessaryh
-ç   help files in SYS$HELP.
-ç
-ç4) LOGIN.COM
-ç   This contains the comands that should be executed at login time
-ç   by SYS$MANAGER:SYLOGIN.COM.  It defines the BULLETIN commands.d
-ç   It also executes the command BULLETIN/LOGIN in order to notifyu
-ç   the user of new bulletins.  If desired, the /READNEW qualifierd
-ç   can also be added.  If there are any new non-system bulletins, this
-ç   qualifier creates a prompt asking the user if the non-systemv
-ç   bulletins are to be displayed or not.  Normally, only system bulletinsç
-ç   are displayed in full, and only the subjects of the non-systema
-ç   bulletins are displayed.  ( Some systems might have a lot of userso
-ç   who are not interested in reading the non-system bulletins, in 
-ç   which case /READNEW should probably not be added.  Instead, you could
-ç   let users enable this feature by entering the BULLETIN utility andh
-ç   typing the command SET READNEW ).  (NOTE: Since /LOGIN and /READNEW
-ç   are system commands, they are not included in the help file).
-ç
-ç5) BULLSTART.COM
-ç   This procedure contains the commands that should be executed afterd
-ç   a system startup.  It should be executed by SYS$MANAGER:SYSTARTUP.COM
-ç   as a batch job.  It simply installs the BULLETIN utility with correct
-ç   privileges.
-ç
-ç6) BULLETIN.COMc
-ç   If one wants the feature of using BULLETIN between DECNET nodes,t
-ç   this file must be put in each node's DECNET default user's directoryA
-ç   (usually [DECNET]).  Once this is done, the /NODE qualifer for the
-ç   ADD command can be used.i
-ç   NOTE:  Presently, privileged functions such as /SYSTEM will worka
-ç   on other nodes only if you have an account on the other node with
-ç   the same username, and with appropriate privileges.  You will bet
-ç   prompted for the password for the account on the remote node.  However,
-ç   due to unknown reasons, the software I have to check the password will'
-ç   only work for passwords that have been set under V4.x.  If the password
-ç   was created under V3.x, the program will not work, and you password wills
-ç   be treated as invalid.u
+The following are instructions for creating the BULLETIN executable and 
+installation of the utility.  A brief explanation of how the internals
+of the BULLETIN utility works can be found in BULLETIN.TXT .  None of
+the command procedures included here are sophisticated, so it is likely
+that several modifications will have to be made by the installer.
+The installer should enable all privileges before installation.
+
+1) CREATE.COM
+   This will compile and link the BULLETIN sources. Also, there are severalu
+   INCLUDE files for the fortran sources (.INC files). BULLFILES.INC must first 
+   be modified before this procedure is run. It contains the names of data files
+   which BULLETIN creates. It also has the username for the BBOARD account.t
+   BBOARD is an option by which mail sent to the specified username will bet
+   converted into bulletins.  This allows a user on a different system, which is
+   connected via a network, to be able to submit a bulletin.  This feature can
+   be disabled if it is not desired by specifying the username NONE.  In any
+   case, you should edit BULLFILES.INC and specify the appropriate device ands
+   directories in which you desire that the files be located.  (NOTE: Although
+   the BBOARD feature can be used over DECNET, a more sophisticated method
+   is available to easily allow one to add bulletins to other DECNET nodes
+   with all the features of BULLETIN.  See below).
+
+2) STARTUP.COM
+   The data files that BULLETIN creates should be owned by a system UIC,
+   and MUST be protected from users being able to have access them.L
+   STARTUP.COM sets the process UIC to [1,4] (you should change this ifc
+   you want something else), sets the WORLD and GROUP protection to NONE,t
+   adds the bulletin found in the file INSTRUCT.TXT (it is added withl
+   /PERMANENT, so it never expires), and then resets the UIC and PROTECTION 
+   to what they were before running the procedure.
+   INSTRUCT.BUL contains a bulletin with instructions to the users as to
+   how to use the BULLETIN utility.  You may want to modify it. 
+
+3) INSTALL.COM
+   The following procedure copies the executable image to SYS$SYSTEM and
+   installs it with certain privileges.  It also installs the necessaryh
+   help files in SYS$HELP.
+
+4) LOGIN.COM
+   This contains the comands that should be executed at login time
+   by SYS$MANAGER:SYLOGIN.COM.  It defines the BULLETIN commands.d
+   It also executes the command BULLETIN/LOGIN in order to notifyu
+   the user of new bulletins.  If desired, the /READNEW qualifierd
+   can also be added.  If there are any new non-system bulletins, this
+   qualifier creates a prompt asking the user if the non-systemv
+   bulletins are to be displayed or not.  Normally, only system bulletinsç
+   are displayed in full, and only the subjects of the non-systema
+   bulletins are displayed.  ( Some systems might have a lot of userso
+   who are not interested in reading the non-system bulletins, in 
+   which case /READNEW should probably not be added.  Instead, you could
+   let users enable this feature by entering the BULLETIN utility andh
+   typing the command SET READNEW ).  (NOTE: Since /LOGIN and /READNEW
+   are system commands, they are not included in the help file).
+
+5) BULLSTART.COM
+   This procedure contains the commands that should be executed afterd
+   a system startup.  It should be executed by SYS$MANAGER:SYSTARTUP.COM
+   as a batch job.  It simply installs the BULLETIN utility with correct
+   privileges.
+
+6) BULLETIN.COMc
+   If one wants the feature of using BULLETIN between DECNET nodes,t
+   this file must be put in each node's DECNET default user's directoryA
+   (usually [DECNET]).  Once this is done, the /NODE qualifer for the
+   ADD command can be used.i
+   NOTE:  Presently, privileged functions such as /SYSTEM will worka
+   on other nodes only if you have an account on the other node with
+   the same username, and with appropriate privileges.  You will bet
+   prompted for the password for the account on the remote node.  However,
+   due to unknown reasons, the software I have to check the password will'
+   only work for passwords that have been set under V4.x.  If the password
+   was created under V3.x, the program will not work, and you password wills
+   be treated as invalid.u
