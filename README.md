@@ -5,13 +5,20 @@ local VAX/VMS cluster.  It eventually went away due to security issues.
 But I was thinking it might be fun to recreate.  First though I'd like
 an historic git repo that covers the early years.
 
-This repo is not it.  It's where I attempt to recreate it.
+This branch is where the gathering of the files was done and where they
+were converted into more usable formats. The `historical` and `master`
+branches contain the actual timeline of the code.
 
 ## Who wrote it
 
 First, git commits need an author.  It would be nice to figure out
 the author.  The version I used I suspect was written by
-[Mark London](http://web.mit.edu/london/www/home.html).
+[Mark London](http://web.mit.edu/london/www/home.html). There were
+contributions by others. I'll attempt to track those as much as I can.
+
+Releases back then did not have commit messages or changelogs. However
+there do seem to have been some announcements and the code does note
+some of the contributors.
 
 ## Where to find BULLETIN
 

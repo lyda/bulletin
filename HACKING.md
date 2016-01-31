@@ -38,3 +38,18 @@ links on getting VMS FORTRAN running on a Linux/Unix system:
     using a proprietary tool called FTP. Need to contact them about
     licensing.
   * Things to [look out for](http://labs.hoffmanlabs.com/node/225).
+
+## Recreating the timeline
+
+Some thoughts on this. Use announcements for the commit messages. Review
+the code to figure out something like a changelog. Commit the
+converted/unpacked raw code in one commit (with author set to Mark London,
+given the right date, etc); add additional files like a README.md and
+a ChangeLog in a follow-on commit with the author of those files.
+
+The code commits should have the following elements.
+
+  * Source: zip file name, decuslib url, original path in that zipfile.
+  * File listing with date info.
+  * Announce text.
+  * Any additional notes.
