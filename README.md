@@ -71,7 +71,7 @@ more detail.
 ### Dependencies
 
 The shell snippets assume zsh (the `**/*.ext` idiom gets used a lot).
-Need a `gcc` toolchain.  Need the `unzip` and `zoo` utilities.
+Need a `gcc` toolchain.  Need the `unzip`, `unar` and `zoo` utilities.
 
 ### File conversions
 
@@ -83,7 +83,7 @@ Some files are in VMS record formats.  These are handled by
 I think these are mail archives.  Might need a script to turn those
 into mbox files.
 
-### .zoo and .zip files
+### Unpacking archives.
 
 Within the zip files there are sometimes other archive files.
 These had to be extracted.
@@ -92,7 +92,7 @@ For .zoo files:
 
 ```
 for f in **/*.zoo; do
-  (cd ${f%\/*} && zoo -extract ${f##*\/} && git rm ${f##*\/});
+  (cd ${f%\/*} && zoo -extract ${f##*\/} && rm ${f##*\/});
 done
 ```
 
@@ -100,7 +100,15 @@ For .zip files:
 
 ```
 for f in **/*.zip; do
-  (cd ${f%\/*} && unzip ${f##*\/} && git rm ${f##*\/});
+  (cd ${f%\/*} && unzip ${f##*\/} && rm ${f##*\/});
+done
+```
+
+For .lzh files:
+
+```
+for f in **/*.lzh; do
+  (cd ${f%\/*} && unar ${f##*\/} && rm ${f##*\/});
 done
 ```
 
