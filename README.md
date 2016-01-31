@@ -50,23 +50,16 @@ This was used to create `decus.tar.bz2` which was then extracted as
 
 ## Creating the BULLETIN source repo (or branch)
 
-Still trying to decide the end result here. I was going to do a separate
-source repo but there's a lot of conversion steps I'd like to capture.
-So the `master` branch might turn into a `decus2git` branch and then once
-the gross conversion steps are done, each tape would get it's own orphan
-commit branch (with the correct `GIT_AUTHOR` and commit info metadata).
-Something like `tapes/DECUS_TAPE_NAME`. Then the `master` branch would
-be created by merging in each tape branch in chronological order.
-
-The BULLETIN git repo is created by a shell script, `mkBULLETIN.sh`
-based on edits to the various versions of bulletin that were extracted
-from the ZIP archives.
-
 The files in the ZIP archives are not ready in their current state to
 make the repo. A number of things had to be done to get them ready for
-a proper historical source code archive.  The commit logs for this repo
-cover those steps, but the following sections explain the steps in
-more detail.
+a proper historical source code archive.  The `conversion` branch tracks
+the steps taken to prepare to recreate the historical archive.
+
+Once the `conversion` branch seems complete, I'll start creating
+the historical archive.
+
+The subsections below track the major conversion probems encountered
+and the steps taken to address them.
 
 ### Dependencies
 
