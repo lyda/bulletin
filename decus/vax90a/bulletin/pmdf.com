@@ -1,4 +1,4 @@
-ÿû$set nover
+$set nover
 $copy sys$input BULLETIN_MASTER.PAS
 $deck
 %INCLUDE '[-]ATTRIB.INC'
