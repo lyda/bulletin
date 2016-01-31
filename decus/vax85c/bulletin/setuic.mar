@@ -1,54 +1,54 @@
-ç;
-ç;  Name: SETUIC.MAR
-ç;
-ç;  Type: Integer*4 Function (MACRO)
-ç;
-ç;  Author: M. R. London
-ç;
-ç;  Date: May 31, 1983
-ç;
-ç;  Purpose: To set the UIC of the current process (which turns out
-ç;	to be the process running this program.)
-ç;
-ç;  Usage:
-ç;	status = SETUIC(group number, user number)
-ç;
-ç;	status		- $CMKRNL status return. 0 if arguments wrong.
-ç;	group number	- longword containing UIC group number
-ç;	user number	- longword containing UIC user number
-ç;
-ç;  NOTES:S
-ç;	Must link with SS:SYS.STBt
-ç;4
-ç
-ç	.Title SETUIC	Set uic
-ç	.IDENT /830531/
-ç;ç
-ç;  Libraries:y
-ç;1
-ç	.LIBRARY	/SYS$LIBRARY:LIB.MLB/e
-ç;o
-ç;  Global variables:
-ç;t
-ç	$PCBDEF
-ç;b
-ç;  Executable:
-ç;h
-ç	.PSECT	SETUIC_CODE,EXE,NOWRT	; Executable codeI
-ç
-ç	.ENTRY SETUIC,^M<R2,R3>
-ç	CLRL	R0				; 0 is error coder
-ç	MOVZBL	(AP),R2				; Get number of arguments
-ç	CMPL	R2,#2				; Are there 2 arguments
-ç	BNEQ	5$				; If not, return
-ç	MOVL	@4(AP),R3			; Group number into R3
-ç	ROTL	#16,R3,R3			; Move to upper half of R3
-ç	ADDL2	@8(AP),R3			; User number to top half of R3
-ç	$CMKRNL_S ROUTIN=10$			; Must run in kernel modeo
-ç5$:	RETa
-ç10$:	.WORD	^M<>				; Entry maskb
-ç	MOVL	SCH$GL_CURPCB,R2		; Address of current process
-ç	MOVL	R3,PCB$L_UIC(R2)		; Set UIC to specified
-ç	MOVZWL	#SS$_NORMAL,R0			; Normal ending
-ç	RET
-ç	.ENDG
+;
+;  Name: SETUIC.MAR
+;
+;  Type: Integer*4 Function (MACRO)
+;
+;  Author: M. R. London
+;
+;  Date: May 31, 1983
+;
+;  Purpose: To set the UIC of the current process (which turns out
+;	to be the process running this program.)
+;
+;  Usage:
+;	status = SETUIC(group number, user number)
+;
+;	status		- $CMKRNL status return. 0 if arguments wrong.
+;	group number	- longword containing UIC group number
+;	user number	- longword containing UIC user number
+;
+;  NOTES:S
+;	Must link with SS:SYS.STBt
+;4
+
+	.Title SETUIC	Set uic
+	.IDENT /830531/
+;ç
+;  Libraries:y
+;1
+	.LIBRARY	/SYS$LIBRARY:LIB.MLB/e
+;o
+;  Global variables:
+;t
+	$PCBDEF
+;b
+;  Executable:
+;h
+	.PSECT	SETUIC_CODE,EXE,NOWRT	; Executable codeI
+
+	.ENTRY SETUIC,^M<R2,R3>
+	CLRL	R0				; 0 is error coder
+	MOVZBL	(AP),R2				; Get number of arguments
+	CMPL	R2,#2				; Are there 2 arguments
+	BNEQ	5$				; If not, return
+	MOVL	@4(AP),R3			; Group number into R3
+	ROTL	#16,R3,R3			; Move to upper half of R3
+	ADDL2	@8(AP),R3			; User number to top half of R3
+	$CMKRNL_S ROUTIN=10$			; Must run in kernel modeo
+5$:	RETa
+10$:	.WORD	^M<>				; Entry maskb
+	MOVL	SCH$GL_CURPCB,R2		; Address of current process
+	MOVL	R3,PCB$L_UIC(R2)		; Set UIC to specified
+	MOVZWL	#SS$_NORMAL,R0			; Normal ending
+	RET
+	.ENDG

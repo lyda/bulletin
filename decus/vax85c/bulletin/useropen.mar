@@ -1,154 +1,154 @@
-ç;------------------------------------------------------------------------------
-ç;
-ç;		Name: USER_OPEN
-ç;
-ç;		Type: Multilple Function (MACRO)
-ç;
-ç;     		Author:	T.W.Fredian
-ç;			MIT Plasma Fusion Center
-ç;
-ç;		Date:	January 26, 1983
-ç;
-ç;    		Version:
-ç;
-ç;    		Purpose: Used to permit qio access to files with fortran.
-ç;			 Returns channel and file size information and
-ç;			 provides file truncation capability. Files opened
-ç;			 with these useopens cannot be accessed using fortran-
-ç;			 reads and writes and the dispose= keyword on the
-ç;			 close of the file will have no effect. To make then
-ç;			 logical unit reuseable for normal RMS access you must
-ç;			 deassign the channel using SYS$DASSGN(%VAL(channel))ç
-ç;			 and then use the close (unit= ) statement.d
-ç;e
-ç;               Types of useropens provided:
-ç;s
-ç;                   USER_OPEN$OLD        - open old file
-ç;                   USER_OPEN$NEW        - open new file
-ç;                   USER_OPEN$TRUNCATE   - open old file and truncate it
-ç;                                          to the size specified by the 
-ç;                                          INITIALSIZE keyword of the open
-ç; 
-ç;              To receive the channel, open RMS status and size of the filei
-ç;              include a common USER_OPEN as follows:e
-ç;o
-ç;              Common /USER_OPEN/ CHANNEL,STATUS,SIZE-
-ç;              Integer*4 CHANNEL - I/O channel assigned to the filei
-ç;              Integer*4 STATUS  - RMS status return of open
-ç;              Integer*4 SIZE    - Size of the file opened in blocks
-ç;i
-ç;------------------------------------------------------------------------------h
-ç;n
-ç;	Call seqence: NONE - USEROPEN keyword of fortran OPEN statements
-ç;                     for example:
-ç;a
-ç;           External USER_OPEN$NEW
-ç;           .C
-ç;           . 
-ç;           .Z
-ç;           OPEN (UNIT=lun,FILE=filename,....,USEROPEN=USER_OPEN$NEW)i
-ç; 
-ç;------------------------------------------------------------------------------r
-ç;Z
-ç; 	Description:f
-ç;p
-ç; Entry mask for USER_OPEN$OLD
-ç; Get the FAB address-
-ç; Set the user file open bit
-ç; Open old file
-ç; Save the channel
-ç; Save the size 
-ç; Save the statusm
-ç; Return
-ç
-ç; Entry mask for USER_OPEN$NEW
-ç; Get the FAB addressE
-ç; Set the user file open bit
-ç; Open new file 
-ç; Save the channel
-ç; Save the sizen
-ç; Save the statusS
-ç; Return
-ç
-ç; Entry mask for USER_OPEN$TRUNCATE-
-ç; Get the FAB address-
-ç; Get the RAB address-
-ç; Save the sizes
-ç; Open old fileç
-ç; Connect file to record stream 
-ç; Load the size of the file in the RAB
-ç; Set the access mode to relative file address
-ç; Find the last record in the file
-ç; Place the end of file marker at this locationN
-ç; Mark the file to be truncated on close
-ç; Close the file
-ç; Return
-ç
-ç; Enda
-ç;e
-ç;+-----------------------------------------------------------------------------f
-ç
-ç	.TITLE	USER_OPENç
-ç	.IDENT	/V_830128/
-ç
-ç; 
-ç;------------------------------------------------------------------------------d
-ç;a
-ç; Global variables:f
-ç;f
-ç	.PSECT	USER_OPEN	LONG,PIC,OVR,GBL,SHR,NOEXE
-ç
-çCHANNEL:	.BLKL	1			; Channel numberi
-çSTATUS:		.BLKL	1			; Status return of open
-çSIZE:		.BLKL	1			; Size of file 
-ç
-ç;n
-ç;-------------------------------------------------------------------------------
-ç;-
-ç; Executable:-
-ç;-
-ç	.PSECT	$CODE	LONG,PIC,USR,CON,REL,LCL,SHR,EXE,RD,NOWRT,NOVECç
-ç
-ç	.ENTRY	USER_OPEN$OLD,^M<R2>		; Entry mask for USER_OPEN$OLD
-ç        MOVL	4(AP),R2			; Get the FAB addressa
-ç	INSV	#1,#FAB$V_UFO,#1,FAB$L_FOP(R2)	; Set the user file open bitS
-ç	$OPEN	FAB=(R2)			; Open old fileC
-ç        MOVL	FAB$L_STV(R2),CHANNEL		; Save the channel
-ç	MOVL	FAB$L_ALQ(R2),SIZE		; Save the sizeç
-ç	MOVL	R0,STATUS			; Save the status-
-ç	RET					; Return-
-ç
-ç        .ENTRY  USER_OPEN$NEW,^M<R2>		; Entry mask for USER_OPEN$NEW
-ç	MOVL	4(AP),R2			; Get the FAB address
-ç	INSV	#1,#FAB$V_UFO,#1,FAB$L_FOP(R2)	; Set the user file open bitD
-ç	INSV	#0,#FAB$V_CBT,#1,FAB$L_FOP(R2)	; Disable contiguous best try
-ç	$CREATE	FAB=(R2)			; Open new filee
-ç        MOVL	FAB$L_STV(R2),CHANNEL		; Save the channel
-ç	MOVL	FAB$L_ALQ(R2),SIZE		; Save the sizen
-ç	MOVL	R0,STATUS			; Save the statust
-ç	RET					; ReturnS
-ç
-ç	.ENTRY	USER_OPEN$TRUNCATE,^M<R2,R3,R4,R5>	; Entry mask for USER_OPEN$TRUNCATE
-ç        MOVL	4(AP),R2			; Get the FAB address(
-ç	MOVL	8(AP),R3			; Get the RAB address
-ç	MOVL	FAB$L_ALQ(R2),R4		; Save the size 
-ç	INCL	R4				; Increment the size
-ç	INSV	#0,#FAB$V_SQO,#1,FAB$L_FOP(R2)	; Clear the sequential only bit
-ç	$OPEN	FAB=(R2)			; Open old fileL
-ç	BLBC	R0,CLOSE			; If unsuccessful branch to close
-ç	$CONNECT RAB=@8(AP)			; Connect file to record stream
-ç        BLBC	R0,CLOSE			; If unsuccessful branch to closeN
-ç	MOVL	R4,RAB$L_RFA0(R3)		; Load the size of the file in the RAB 
-ç	MOVW	#0,RAB$W_RFA4(R3)A
-ç	MOVB	#RAB$C_RFA,RAB$B_RAC(R3)	; Set the access mode to relative file address 
-ç	$FIND	RAB=(R3)			; Find the last record in the file
-ç	BLBC	R0,CLOSE			; If unsuccessful branch to close
-ç	$TRUNCATE RAB=(R3)			; Place the end of file marker at this locationI
-ç	INSV	#1,#FAB$V_TEF,#1,FAB$L_FOP(R2)	; Mark the file to be truncated on close 
-çCLOSE:	PUSHL	R0				; Save error status
-ç	$CLOSE	FAB=(R2)			; Close the fileR
-ç	POPL	R0				; Restore error status
-ç	MOVL    R0,STATUS			; Return the status
-ç	RET					; ReturnR
-ç
-ç	.END					; Enda
+;------------------------------------------------------------------------------
+;
+;		Name: USER_OPEN
+;
+;		Type: Multilple Function (MACRO)
+;
+;     		Author:	T.W.Fredian
+;			MIT Plasma Fusion Center
+;
+;		Date:	January 26, 1983
+;
+;    		Version:
+;
+;    		Purpose: Used to permit qio access to files with fortran.
+;			 Returns channel and file size information and
+;			 provides file truncation capability. Files opened
+;			 with these useopens cannot be accessed using fortran-
+;			 reads and writes and the dispose= keyword on the
+;			 close of the file will have no effect. To make then
+;			 logical unit reuseable for normal RMS access you must
+;			 deassign the channel using SYS$DASSGN(%VAL(channel))ç
+;			 and then use the close (unit= ) statement.d
+;e
+;               Types of useropens provided:
+;s
+;                   USER_OPEN$OLD        - open old file
+;                   USER_OPEN$NEW        - open new file
+;                   USER_OPEN$TRUNCATE   - open old file and truncate it
+;                                          to the size specified by the 
+;                                          INITIALSIZE keyword of the open
+; 
+;              To receive the channel, open RMS status and size of the filei
+;              include a common USER_OPEN as follows:e
+;o
+;              Common /USER_OPEN/ CHANNEL,STATUS,SIZE-
+;              Integer*4 CHANNEL - I/O channel assigned to the filei
+;              Integer*4 STATUS  - RMS status return of open
+;              Integer*4 SIZE    - Size of the file opened in blocks
+;i
+;------------------------------------------------------------------------------h
+;n
+;	Call seqence: NONE - USEROPEN keyword of fortran OPEN statements
+;                     for example:
+;a
+;           External USER_OPEN$NEW
+;           .C
+;           . 
+;           .Z
+;           OPEN (UNIT=lun,FILE=filename,....,USEROPEN=USER_OPEN$NEW)i
+; 
+;------------------------------------------------------------------------------r
+;Z
+; 	Description:f
+;p
+; Entry mask for USER_OPEN$OLD
+; Get the FAB address-
+; Set the user file open bit
+; Open old file
+; Save the channel
+; Save the size 
+; Save the statusm
+; Return
+
+; Entry mask for USER_OPEN$NEW
+; Get the FAB addressE
+; Set the user file open bit
+; Open new file 
+; Save the channel
+; Save the sizen
+; Save the statusS
+; Return
+
+; Entry mask for USER_OPEN$TRUNCATE-
+; Get the FAB address-
+; Get the RAB address-
+; Save the sizes
+; Open old fileç
+; Connect file to record stream 
+; Load the size of the file in the RAB
+; Set the access mode to relative file address
+; Find the last record in the file
+; Place the end of file marker at this locationN
+; Mark the file to be truncated on close
+; Close the file
+; Return
+
+; Enda
+;e
+;+-----------------------------------------------------------------------------f
+
+	.TITLE	USER_OPENç
+	.IDENT	/V_830128/
+
+; 
+;------------------------------------------------------------------------------d
+;a
+; Global variables:f
+;f
+	.PSECT	USER_OPEN	LONG,PIC,OVR,GBL,SHR,NOEXE
+
+CHANNEL:	.BLKL	1			; Channel numberi
+STATUS:		.BLKL	1			; Status return of open
+SIZE:		.BLKL	1			; Size of file 
+
+;n
+;-------------------------------------------------------------------------------
+;-
+; Executable:-
+;-
+	.PSECT	$CODE	LONG,PIC,USR,CON,REL,LCL,SHR,EXE,RD,NOWRT,NOVECç
+
+	.ENTRY	USER_OPEN$OLD,^M<R2>		; Entry mask for USER_OPEN$OLD
+        MOVL	4(AP),R2			; Get the FAB addressa
+	INSV	#1,#FAB$V_UFO,#1,FAB$L_FOP(R2)	; Set the user file open bitS
+	$OPEN	FAB=(R2)			; Open old fileC
+        MOVL	FAB$L_STV(R2),CHANNEL		; Save the channel
+	MOVL	FAB$L_ALQ(R2),SIZE		; Save the sizeç
+	MOVL	R0,STATUS			; Save the status-
+	RET					; Return-
+
+        .ENTRY  USER_OPEN$NEW,^M<R2>		; Entry mask for USER_OPEN$NEW
+	MOVL	4(AP),R2			; Get the FAB address
+	INSV	#1,#FAB$V_UFO,#1,FAB$L_FOP(R2)	; Set the user file open bitD
+	INSV	#0,#FAB$V_CBT,#1,FAB$L_FOP(R2)	; Disable contiguous best try
+	$CREATE	FAB=(R2)			; Open new filee
+        MOVL	FAB$L_STV(R2),CHANNEL		; Save the channel
+	MOVL	FAB$L_ALQ(R2),SIZE		; Save the sizen
+	MOVL	R0,STATUS			; Save the statust
+	RET					; ReturnS
+
+	.ENTRY	USER_OPEN$TRUNCATE,^M<R2,R3,R4,R5>	; Entry mask for USER_OPEN$TRUNCATE
+        MOVL	4(AP),R2			; Get the FAB address(
+	MOVL	8(AP),R3			; Get the RAB address
+	MOVL	FAB$L_ALQ(R2),R4		; Save the size 
+	INCL	R4				; Increment the size
+	INSV	#0,#FAB$V_SQO,#1,FAB$L_FOP(R2)	; Clear the sequential only bit
+	$OPEN	FAB=(R2)			; Open old fileL
+	BLBC	R0,CLOSE			; If unsuccessful branch to close
+	$CONNECT RAB=@8(AP)			; Connect file to record stream
+        BLBC	R0,CLOSE			; If unsuccessful branch to closeN
+	MOVL	R4,RAB$L_RFA0(R3)		; Load the size of the file in the RAB 
+	MOVW	#0,RAB$W_RFA4(R3)A
+	MOVB	#RAB$C_RFA,RAB$B_RAC(R3)	; Set the access mode to relative file address 
+	$FIND	RAB=(R3)			; Find the last record in the file
+	BLBC	R0,CLOSE			; If unsuccessful branch to close
+	$TRUNCATE RAB=(R3)			; Place the end of file marker at this locationI
+	INSV	#1,#FAB$V_TEF,#1,FAB$L_FOP(R2)	; Mark the file to be truncated on close 
+CLOSE:	PUSHL	R0				; Save error status
+	$CLOSE	FAB=(R2)			; Close the fileR
+	POPL	R0				; Restore error status
+	MOVL    R0,STATUS			; Return the status
+	RET					; ReturnR
+
+	.END					; Enda

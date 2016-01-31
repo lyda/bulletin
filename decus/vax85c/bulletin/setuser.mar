@@ -1,83 +1,83 @@
-ç;
-ç;  Name: SETUSER.MAR
-ç;
-ç;  Type: Integer*4 Function (MACRO)
-ç;
-ç;  Author: M. R. London
-ç;
-ç;  Date: Jan 26, 1983
-ç;
-ç;  Purpose: To set the Username of the current process (which turns out
-ç;	to be the process running this program.)
-ç;
-ç;  Usage:
-ç;	status = SETUSER(username)
-ç;
-ç;	status		- $CMKRNL status return. 0 if arguments wrong.
-ç;	username	- Character string containing username
-ç;
-ç;  NOTES:
-ç;	Must link with SS:SYS.STB
-ç;
-ç
-ç	.Title SETUSER	Set uicS
-ç	.IDENT /830531/
-ç;p
-ç;  Libraries:t
-ç;M
-ç	.LIBRARY	/SYS$LIBRARY:LIB.MLB/n
-ç;
-ç;  Global variables:
-ç;
-ç	$PCBDEF
-ç	$JIBDEF
-ç;t
-ç;  local variables:e
-ç;o
-ç
-ç	.PSECT	 SETUSER_DATA,NOEXEh
-ç
-çNEWUSE:	.BLKB	12				; Contains new username
-çOLDUSE: .BLKB	12				; Contains old usernamet
-ç; 
-ç;  Executable:
-ç;0
-ç	.PSECT	SETUSER_CODE,EXE,NOWRT	; Executable code
-ç
-ç	.ENTRY	SETUSER,^M<R2,R3,R4,R5,R6,R7,R8>        
-ç	CLRL	R0				; 0 is error code 
-ç	MOVZBL	(AP),R8				; Get number of arguments
-ç	CMPL	R8,#1				; Correct number of arguments
-ç	BLSS	5$				; If not, return
-ç	MOVZBL	@4(AP),R6			; Get size of string
-ç	MOVL	4(AP),R7			; Get address of descriptor
-ç	MOVL	4(R7),R7			; Get address of string
-ç	MOVC5	R6,(R7),#32,#12,NEWUSE		; Get new username string
-ç	CMPL	R8,#2				; Old username given?
-ç	BLSS	2$				; No
-ç	MOVZBL	@8(AP),R6			; Get size of string
-ç	MOVL	8(AP),R7			; Get address of descriptor
-ç	MOVL	4(R7),R7			; Get address of string
-ç	MOVC5	R6,(R7),#32,#12,OLDUSE		; Get old username string
-ç	$CMKRNL_S ROUTIN=20$		   	; Must run in kernel mode
-ç	TSTL	R0				; If old username is checks with
-ç   	BEQL	2$				; present process name, change
-ç	MOVL	#2,R0				; to new username, else flagM
-ç	RET					; error and returnG
-ç2$:	$CMKRNL_S ROUTIN=10$			; Must run in kernel mode
-ç5$:	RETB
-ç10$:	.WORD	^M<>				; Entry mask	
-ç	MOVL	SCH$GL_CURPCB,R7		; Address of current process
-ç	MOVL	PCB$L_JIB(R7),R7		; Address of Job Info Blocki
-ç						; NOTE: MOVC destroys r0-r5;
-ç	MOVC3	#12,NEWUSE,JIB$T_USERNAME(R7) 	; change username JIBu
-ç	MOVC3	#12,NEWUSE,CTL$T_USERNAME 	; change username in P1    
-ç	MOVZWL	#SS$_NORMAL,R0			; Normal ending
-ç	RET
-ç20$:	.WORD	^M<>				; Entry maskl
-ç	MOVL	SCH$GL_CURPCB,R7		; Address of current process
-ç	MOVL	PCB$L_JIB(R7),R7		; Address of Job Info Blockç
-ç						; NOTE: MOVC destroys r0-r5M
-ç	CMPC	R6,OLDUSE,JIB$T_USERNAME(R7) 	; change username JIBC
-ç	RET
-ç	.END 
+;
+;  Name: SETUSER.MAR
+;
+;  Type: Integer*4 Function (MACRO)
+;
+;  Author: M. R. London
+;
+;  Date: Jan 26, 1983
+;
+;  Purpose: To set the Username of the current process (which turns out
+;	to be the process running this program.)
+;
+;  Usage:
+;	status = SETUSER(username)
+;
+;	status		- $CMKRNL status return. 0 if arguments wrong.
+;	username	- Character string containing username
+;
+;  NOTES:
+;	Must link with SS:SYS.STB
+;
+
+	.Title SETUSER	Set uicS
+	.IDENT /830531/
+;p
+;  Libraries:t
+;M
+	.LIBRARY	/SYS$LIBRARY:LIB.MLB/n
+;
+;  Global variables:
+;
+	$PCBDEF
+	$JIBDEF
+;t
+;  local variables:e
+;o
+
+	.PSECT	 SETUSER_DATA,NOEXEh
+
+NEWUSE:	.BLKB	12				; Contains new username
+OLDUSE: .BLKB	12				; Contains old usernamet
+; 
+;  Executable:
+;0
+	.PSECT	SETUSER_CODE,EXE,NOWRT	; Executable code
+
+	.ENTRY	SETUSER,^M<R2,R3,R4,R5,R6,R7,R8>        
+	CLRL	R0				; 0 is error code 
+	MOVZBL	(AP),R8				; Get number of arguments
+	CMPL	R8,#1				; Correct number of arguments
+	BLSS	5$				; If not, return
+	MOVZBL	@4(AP),R6			; Get size of string
+	MOVL	4(AP),R7			; Get address of descriptor
+	MOVL	4(R7),R7			; Get address of string
+	MOVC5	R6,(R7),#32,#12,NEWUSE		; Get new username string
+	CMPL	R8,#2				; Old username given?
+	BLSS	2$				; No
+	MOVZBL	@8(AP),R6			; Get size of string
+	MOVL	8(AP),R7			; Get address of descriptor
+	MOVL	4(R7),R7			; Get address of string
+	MOVC5	R6,(R7),#32,#12,OLDUSE		; Get old username string
+	$CMKRNL_S ROUTIN=20$		   	; Must run in kernel mode
+	TSTL	R0				; If old username is checks with
+   	BEQL	2$				; present process name, change
+	MOVL	#2,R0				; to new username, else flagM
+	RET					; error and returnG
+2$:	$CMKRNL_S ROUTIN=10$			; Must run in kernel mode
+5$:	RETB
+10$:	.WORD	^M<>				; Entry mask	
+	MOVL	SCH$GL_CURPCB,R7		; Address of current process
+	MOVL	PCB$L_JIB(R7),R7		; Address of Job Info Blocki
+						; NOTE: MOVC destroys r0-r5;
+	MOVC3	#12,NEWUSE,JIB$T_USERNAME(R7) 	; change username JIBu
+	MOVC3	#12,NEWUSE,CTL$T_USERNAME 	; change username in P1    
+	MOVZWL	#SS$_NORMAL,R0			; Normal ending
+	RET
+20$:	.WORD	^M<>				; Entry maskl
+	MOVL	SCH$GL_CURPCB,R7		; Address of current process
+	MOVL	PCB$L_JIB(R7),R7		; Address of Job Info Blockç
+						; NOTE: MOVC destroys r0-r5M
+	CMPC	R6,OLDUSE,JIB$T_USERNAME(R7) 	; change username JIBC
+	RET
+	.END 

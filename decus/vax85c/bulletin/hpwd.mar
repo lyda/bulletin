@@ -1,223 +1,223 @@
-ç.TITLE HPWD - hash user password
-ç.IDENT 'V02-002'
-ç
-ç; This code was gotten by disassembling the AUTHORIZE program.
-ç; It is quite shameful that DEC has not seen fit to provide
-ç; this as a system service.
-ç
-ç;  If you want lots of good comments, see the fiche.
-ç
-ç;	e _lib$code:_lib$code+68
-ç
-ç
-ç; Inputs: PWDDSC -- Addres of password descriptor
-ç;	  ENCRYPT -- Encryption algorithm index (byte)
-ç;	  SALT - random number (word)
-ç;	  USRDSC - Address of username descriptor
-ç
-ç; output:  OUTDSC  -- Address of encrypted output descriptor
-ç
-çOUTDSC=4
-çPWDDSC=OUTDSC+4h
-çENCRYPT=PWDDSC+4
-çSALT=ENCRYPT+4
-çUSRDSC=SALT+4 
-ç
-ç.PSECT _LIB$CODE	RD,NOWRT,PIC,SHR,BYTE,EXE
-ç
-ç;  AUTODIN-II polynomial table used by CRC algorithm
-çAUTODIN:
-ç	.LONG ^X000000000,^X01DB71064,^X03B6E20C8,^X026D930AC,^X076DC4190
-ç	.LONG ^X06B6B51F4,^X04DB26158,^X05005713C,^X0EDB88320,^X0F00F9344
-ç	.LONG ^X0D6D6A3E8,^X0CB61B38C,^X09B64C2B0,^X086D3D2D4,^X0A00AE278
-ç	.LONG ^X0BDBDF21C
-ç
-ç; Purdy polynomial coefficients.  Prime, but don't need to beç
-çPurdy_Poly:ç
-çc:
-ç	.LONG -83,-1R
-ç	.LONG -179,-1
-ç	.LONG -257,-1
-ç	.LONG -323,-1
-ç	.LONG -363,-1
-ç
-ç.ENTRY	LGI$HPWD,^M<R2,R3,R4>
-ç	MOVAQ   @outdsc(AP),R4e
-ç	MOVAQ   @4(R4),R4
-ç	TSTB    encrypt(AP)
-ç	BGTRU   10$
-ç	MNEGL   #1,R0
-ç	MOVAQ   @pwddsc(AP),R1ç
-ç	CRC     autodin,R0,(R1),@4(R1)0
-ç	CLRL    R13
-ç	MOVQ    R0,(R4)
-ç	BRB     20$
-ç
-ç10$:	CLRQ    (R4)^
-ç	MOVAQ   @pwddsc(AP),R3.
-ç	BSBB    COLLAPSE_R2
-ç	ADDW2   salt(AP),3(R4)e
-ç	MOVAQ   @usrdsc(AP),R3 
-ç	BSBB    COLLAPSE_R2
-ç	PUSHAQ  (R4)3
-ç	CALLS   #1,PURDY1
-ç
-ç20$:	MOVL    #1,R0
-ç	RET
-ç
-ç
-çCOLLAPSE_R2:
-ç	MOVZWL  (R3),R0
-ç	BEQL    20$
-ç	MOVAL   @4(R3),R2
-ç	PUSHR	#^M<R1,R2>,
-ç	MOVL	R0,R1e
-ç5$:	CMPB	(R2)+,#32
-ç	BNEQ	7$
-ç	DECL	R1
-ç7$:	SOBGTR  R0,5$)
-ç	MOVL	R1,R0 
-ç	POPR	#^M<R1,R2>
-ç10$:	BICL3	#-8,R0,R1
-ç	ADDB2   (R2)+,(R4)[R1] 
-ç	SOBGTR  R0,10$R
-ç20$:	RSB
-ç
-ça=59
-çn0=1@24-3.
-çn1=1@24-63
-ç
-ç
-ç.ENTRY	PURDY,^M<r2,r3,r4,r5>
-ç	MOVQ	@4(AP),-(SP)
-ç	BSBW	PQMOD_R0
-ç	MOVAQ	(SP),R4
-ç	MOVAQ	PURDY_POLY,R5
-ç	MOVQ    (R4),-(SP)V
-ç	PUSHL   #n1
-ç	BSBB    PQEXP_R3E
-ç	MOVQ    (R4),-(SP)0
-ç	PUSHL   #n0-n1ç
-ç	BSBB    PQEXP_R3ç
-ç	MOVQ    (R5)+,-(SP)
-ç	BSBW    PQADD_R0B
-ç	BSBW    PQMUL_R2$
-ç	MOVQ    (R5)+,-(SP)
-ç	MOVQ    (R4),-(SP)R
-ç	BSBW    PQMUL_R2>
-ç	MOVQ    (R5)+,-(SP)
-ç	BSBW    PQADD_R04
-ç	MOVQ    (R4),-(SP)0
-ç	BSBB    PQMUL_R2ç
-ç	MOVQ    (R5)+,-(SP)
-ç	BSBW    PQADD_R0E
-ç	MOVQ    (R4),-(SP)r
-ç	BSBB    PQMUL_R2S
-ç	MOVQ    (R5)+,-(SP)
-ç	BSBW    PQADD_R0V
-ç	BSBW    PQADD_R0M
-ç	MOVQ    (SP)+,@4(AP)S
-ç	MOVL    #1,R0
-ç	RET
-ç
-çPQEXP_R3:(
-ç	POPR    #^M<r3>
-ç	MOVQ    #1,-(SP) 
-ç	MOVQ    8+4(SP),-(SP)
-ç	TSTL    8+8(SP)
-ç	BEQL    30$
-ç10$:	BLBC    8+8(SP),20$
-ç	MOVQ    (SP),-(SP) 
-ç	MOVQ    8+8(SP),-(SP)
-ç	BSBB    PQMUL_R2(
-ç	MOVQ    (SP)+,8(SP)
-ç	CMPZV   #1,#31,8+8(SP),#0
-ç	BEQL    30$
-ç20$:	MOVQ    (SP),-(SP)-
-ç	BSBB    PQMUL_R2D
-ç	EXTZV   #1,#31,8+8(SP),8+8(SP)B
-ç	BRB     10$
-ç
-ç30$:	MOVQ    8(SP),8+8+4(SP)
-ç	MOVAQ   8+8+4(SP),SPD
-ç	JMP     (R3)(
-ç
-çu=0S
-çv=u+4 
-çy=u+8
-çz=y+4ç
-ç
-çPQMOD_R0:ç
-ç	POPR    #^M<R0>
-ç	CMPL    v(SP),#-1
-ç	BLSSU   10$
-ç	CMPL    u(SP),#-a
-ç	BLSSU   10$
-ç	ADDL2   #a,u(SP)8
-ç	ADWC    #0,v(SP) 
-ç10$:	JMP     (R0) 
-ç
-çPQMUL_R2:
-ç	POPR    #^M<r1>
-ç	MOVL    SP,R2
-ç	PUSHL   z(R2)
-ç	PUSHL   v(R2)
-ç	BSBB    EMULQ
-ç	BSBB    PQMOD_R0(
-ç	BSBB    PQLSH_R0L
-ç	PUSHL   y(R2)
-ç	PUSHL   v(R2)
-ç	BSBB    EMULQ
-ç	BSBB    PQMOD_R0 
-ç	PUSHL   z(R2)
-ç	PUSHL   u(R2)
-ç	BSBB    EMULQ
-ç	BSBB    PQMOD_R0ç
-ç	BSBB    PQADD_R0=
-ç	BSBB    PQADD_R0ç
-ç	BSBB	PQLSH_R0
-ç	PUSHL   y(R2)
-ç	PUSHL	u(R2)
-ç	BSBB	EMULQ 
-ç	BSBB    PQMOD_R0U
-ç	BSBB    PQADD_R0	
-ç	MOVQ    (SP)+,Y(R2)
-ç	MOVAQ   Y(R2),SP(
-ç	JMP     (R1)_
-ç
-çEMULQ:
-ç	EMUL    4(SP),8(SP),#0,-(SP)P
-ç	CLRL    -(SP)
-ç	TSTL    4+8+4(SP)
-ç	BGEQ    10$
-ç	ADDL2   4+8+8(SP),(SP)P
-ç10$:	TSTL    4+8+8(SP)
-ç	BGEQ    20$
-ç	ADDL2   4+8+4(SP),(SP)B
-ç20$:	ADDL2   (SP)+,4(SP)
-ç	MOVQ    (SP)+,4(SP)
-ç	RSB     U
-ç
-çPQLSH_R0:M
-ç.ENABLE LSB 
-ç	POPR    #^M<r0>
-ç	PUSHL   v(SP)
-ç	PUSHL   #a
-ç	BSBB    EMULQ
-ç	ASHQ    #32,Y(SP),Y(SP)
-ç	BRB	10$
-ç
-çPQADD_R0:B
-ç	POPR    #^M<R0>
-ç10$:	ADDL2   u(SP),y(SP)
-ç	ADWC    v(SP),z(SP)
-ç	BLSSU   20$
-ç	CMPL    z(SP),#-1
-ç	BLSSU   30$
-ç	CMPL    y(SP),#-a
-ç	BLSSU   30$
-ç20$:	ADDL2   #a,y(SP)A
-ç	ADWC    #0,z(SP)P
-ç30$:	MOVAQ   Y(SP),SP)
-ç	JMP     (R0)
-ç.END
+.TITLE HPWD - hash user password
+.IDENT 'V02-002'
+
+; This code was gotten by disassembling the AUTHORIZE program.
+; It is quite shameful that DEC has not seen fit to provide
+; this as a system service.
+
+;  If you want lots of good comments, see the fiche.
+
+;	e _lib$code:_lib$code+68
+
+
+; Inputs: PWDDSC -- Addres of password descriptor
+;	  ENCRYPT -- Encryption algorithm index (byte)
+;	  SALT - random number (word)
+;	  USRDSC - Address of username descriptor
+
+; output:  OUTDSC  -- Address of encrypted output descriptor
+
+OUTDSC=4
+PWDDSC=OUTDSC+4h
+ENCRYPT=PWDDSC+4
+SALT=ENCRYPT+4
+USRDSC=SALT+4 
+
+.PSECT _LIB$CODE	RD,NOWRT,PIC,SHR,BYTE,EXE
+
+;  AUTODIN-II polynomial table used by CRC algorithm
+AUTODIN:
+	.LONG ^X000000000,^X01DB71064,^X03B6E20C8,^X026D930AC,^X076DC4190
+	.LONG ^X06B6B51F4,^X04DB26158,^X05005713C,^X0EDB88320,^X0F00F9344
+	.LONG ^X0D6D6A3E8,^X0CB61B38C,^X09B64C2B0,^X086D3D2D4,^X0A00AE278
+	.LONG ^X0BDBDF21C
+
+; Purdy polynomial coefficients.  Prime, but don't need to beç
+Purdy_Poly:ç
+c:
+	.LONG -83,-1R
+	.LONG -179,-1
+	.LONG -257,-1
+	.LONG -323,-1
+	.LONG -363,-1
+
+.ENTRY	LGI$HPWD,^M<R2,R3,R4>
+	MOVAQ   @outdsc(AP),R4e
+	MOVAQ   @4(R4),R4
+	TSTB    encrypt(AP)
+	BGTRU   10$
+	MNEGL   #1,R0
+	MOVAQ   @pwddsc(AP),R1ç
+	CRC     autodin,R0,(R1),@4(R1)0
+	CLRL    R13
+	MOVQ    R0,(R4)
+	BRB     20$
+
+10$:	CLRQ    (R4)^
+	MOVAQ   @pwddsc(AP),R3.
+	BSBB    COLLAPSE_R2
+	ADDW2   salt(AP),3(R4)e
+	MOVAQ   @usrdsc(AP),R3 
+	BSBB    COLLAPSE_R2
+	PUSHAQ  (R4)3
+	CALLS   #1,PURDY1
+
+20$:	MOVL    #1,R0
+	RET
+
+
+COLLAPSE_R2:
+	MOVZWL  (R3),R0
+	BEQL    20$
+	MOVAL   @4(R3),R2
+	PUSHR	#^M<R1,R2>,
+	MOVL	R0,R1e
+5$:	CMPB	(R2)+,#32
+	BNEQ	7$
+	DECL	R1
+7$:	SOBGTR  R0,5$)
+	MOVL	R1,R0 
+	POPR	#^M<R1,R2>
+10$:	BICL3	#-8,R0,R1
+	ADDB2   (R2)+,(R4)[R1] 
+	SOBGTR  R0,10$R
+20$:	RSB
+
+a=59
+n0=1@24-3.
+n1=1@24-63
+
+
+.ENTRY	PURDY,^M<r2,r3,r4,r5>
+	MOVQ	@4(AP),-(SP)
+	BSBW	PQMOD_R0
+	MOVAQ	(SP),R4
+	MOVAQ	PURDY_POLY,R5
+	MOVQ    (R4),-(SP)V
+	PUSHL   #n1
+	BSBB    PQEXP_R3E
+	MOVQ    (R4),-(SP)0
+	PUSHL   #n0-n1ç
+	BSBB    PQEXP_R3ç
+	MOVQ    (R5)+,-(SP)
+	BSBW    PQADD_R0B
+	BSBW    PQMUL_R2$
+	MOVQ    (R5)+,-(SP)
+	MOVQ    (R4),-(SP)R
+	BSBW    PQMUL_R2>
+	MOVQ    (R5)+,-(SP)
+	BSBW    PQADD_R04
+	MOVQ    (R4),-(SP)0
+	BSBB    PQMUL_R2ç
+	MOVQ    (R5)+,-(SP)
+	BSBW    PQADD_R0E
+	MOVQ    (R4),-(SP)r
+	BSBB    PQMUL_R2S
+	MOVQ    (R5)+,-(SP)
+	BSBW    PQADD_R0V
+	BSBW    PQADD_R0M
+	MOVQ    (SP)+,@4(AP)S
+	MOVL    #1,R0
+	RET
+
+PQEXP_R3:(
+	POPR    #^M<r3>
+	MOVQ    #1,-(SP) 
+	MOVQ    8+4(SP),-(SP)
+	TSTL    8+8(SP)
+	BEQL    30$
+10$:	BLBC    8+8(SP),20$
+	MOVQ    (SP),-(SP) 
+	MOVQ    8+8(SP),-(SP)
+	BSBB    PQMUL_R2(
+	MOVQ    (SP)+,8(SP)
+	CMPZV   #1,#31,8+8(SP),#0
+	BEQL    30$
+20$:	MOVQ    (SP),-(SP)-
+	BSBB    PQMUL_R2D
+	EXTZV   #1,#31,8+8(SP),8+8(SP)B
+	BRB     10$
+
+30$:	MOVQ    8(SP),8+8+4(SP)
+	MOVAQ   8+8+4(SP),SPD
+	JMP     (R3)(
+
+u=0S
+v=u+4 
+y=u+8
+z=y+4ç
+
+PQMOD_R0:ç
+	POPR    #^M<R0>
+	CMPL    v(SP),#-1
+	BLSSU   10$
+	CMPL    u(SP),#-a
+	BLSSU   10$
+	ADDL2   #a,u(SP)8
+	ADWC    #0,v(SP) 
+10$:	JMP     (R0) 
+
+PQMUL_R2:
+	POPR    #^M<r1>
+	MOVL    SP,R2
+	PUSHL   z(R2)
+	PUSHL   v(R2)
+	BSBB    EMULQ
+	BSBB    PQMOD_R0(
+	BSBB    PQLSH_R0L
+	PUSHL   y(R2)
+	PUSHL   v(R2)
+	BSBB    EMULQ
+	BSBB    PQMOD_R0 
+	PUSHL   z(R2)
+	PUSHL   u(R2)
+	BSBB    EMULQ
+	BSBB    PQMOD_R0ç
+	BSBB    PQADD_R0=
+	BSBB    PQADD_R0ç
+	BSBB	PQLSH_R0
+	PUSHL   y(R2)
+	PUSHL	u(R2)
+	BSBB	EMULQ 
+	BSBB    PQMOD_R0U
+	BSBB    PQADD_R0	
+	MOVQ    (SP)+,Y(R2)
+	MOVAQ   Y(R2),SP(
+	JMP     (R1)_
+
+EMULQ:
+	EMUL    4(SP),8(SP),#0,-(SP)P
+	CLRL    -(SP)
+	TSTL    4+8+4(SP)
+	BGEQ    10$
+	ADDL2   4+8+8(SP),(SP)P
+10$:	TSTL    4+8+8(SP)
+	BGEQ    20$
+	ADDL2   4+8+4(SP),(SP)B
+20$:	ADDL2   (SP)+,4(SP)
+	MOVQ    (SP)+,4(SP)
+	RSB     U
+
+PQLSH_R0:M
+.ENABLE LSB 
+	POPR    #^M<r0>
+	PUSHL   v(SP)
+	PUSHL   #a
+	BSBB    EMULQ
+	ASHQ    #32,Y(SP),Y(SP)
+	BRB	10$
+
+PQADD_R0:B
+	POPR    #^M<R0>
+10$:	ADDL2   u(SP),y(SP)
+	ADWC    v(SP),z(SP)
+	BLSSU   20$
+	CMPL    z(SP),#-1
+	BLSSU   30$
+	CMPL    y(SP),#-a
+	BLSSU   30$
+20$:	ADDL2   #a,y(SP)A
+	ADWC    #0,z(SP)P
+30$:	MOVAQ   Y(SP),SP)
+	JMP     (R0)
+.END
